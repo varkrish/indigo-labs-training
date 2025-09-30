@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Local Development with podman compose  - Modern Software Development Practices</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Local Development with podman compose ";
+        var mkdocs_page_input_path = "4_testing/using_composefilesforlocaldev.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/Containerfile.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/bash.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> Modern Software Development Practices
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">1. Cloud Fundamentals</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../1_cloud/hybrid_cloud/">Hybrid Cloud</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../1_cloud/cloud_native_development/">Cloud Native Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../1_cloud/cncf/">CNCF Landscape</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">2. Containerization</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../2_containerization/containers/">Container Fundamentals</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../2_containerization/container_engines_crio/">CRI-O Container Engine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../2_containerization/k8s_openshift/">Kubernetes & OpenShift</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">3. Development Foundations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/requirement_centric_development/">Requirement-Centric Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/12_factor_app/">12-Factor App Methodology</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/microservices/">Microservices Architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/open_practices_inner_loop/">Inner Loop Practices</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/open_practices_outer_loop/">Outer Loop Practices</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/nfrs/">Non-Functional Requirements</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">4. Agile Development & Testing</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../clean_architecture/">Clean Architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bdd_tdd/">BDD and TDD Practices</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Local Development with podman compose </a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-concepts">Key Concepts</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#podman-compose-benefits">podman compose  Benefits</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#development-vs-production">Development vs Production</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#container-orchestration-patterns">Container Orchestration Patterns</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#installation-requirements">Installation Requirements</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#practical-examples">Practical Examples</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#example-1-full-stack-e-commerce-development-environment">Example 1: Full-Stack E-commerce Development Environment</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#step-1-project-structure">Step 1: Project Structure</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-2-main-compose-configuration">Step 2: Main Compose Configuration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-3-development-override-configuration">Step 3: Development Override Configuration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-4-environment-configuration">Step 4: Environment Configuration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-5-development-Containerfiles">Step 5: Development Containerfiles</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-2-react-native-development-environment">Example 2: React Native Development Environment</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-3-database-management-and-seeding">Example 3: Database Management and Seeding</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#common-pitfalls">Common Pitfalls</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-volume-mount-issues">1. Volume Mount Issues</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-service-startup-dependencies">2. Service Startup Dependencies</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-network-connectivity-issues">3. Network Connectivity Issues</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-resource-consumption">4. Resource Consumption</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-environment-configuration">1. Environment Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-development-scripts">2. Development Scripts</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-hot-reloading-configuration">3. Hot Reloading Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-logging-and-debugging">4. Logging and Debugging</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-security-in-development">5. Security in Development</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tools-and-resources">Tools and Resources</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#development-tools">Development Tools</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#monitoring-and-debugging">Monitoring and Debugging</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#useful-commands">Useful Commands</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#hands-on-exercise">Hands-on Exercise</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#exercise-complete-microservices-development-environment">Exercise: Complete Microservices Development Environment</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../mocking_dependent_systems_apis/">API Mocking Strategies</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../secure_coding/">Secure Coding Practices</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../performance_testing_containers/">Performance Testing in Containers</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">5. CI/CD</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ci_cd/cloud_native_ci_cd/">Cloud-Native CI/CD</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">6. Observability</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../observability/dotnet_open_telemetry/">.NET OpenTelemetry</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">7. Red Hat Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../redhat_ecosystem/redhat_software_collections/">Red Hat Software Collections</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../redhat_ecosystem/redhat_supply_chain_ubi/">UBI and Supply Chain Security</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Modern Software Development Practices</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">4. Agile Development & Testing</li>
+      <li class="breadcrumb-item active">Local Development with podman compose </li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="local-development-with-podman-compose">Local Development with podman compose <a class="headerlink" href="#local-development-with-podman-compose" title="Permanent link">&para;</a></h1>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>Local development environments are crucial for developer productivity and application quality. Using podman compose , developers can create consistent, reproducible development environments that closely mirror production while remaining lightweight and fast to start. This guide demonstrates how to set up and manage local development environments for .NET and React Native applications using podman compose  with Red Hat UBI images.</p>
+<p>podman compose  provides the same functionality as Docker Compose but with enhanced security through rootless containers, making it ideal for enterprise development environments where security is paramount.</p>
+<h2 id="key-concepts">Key Concepts<a class="headerlink" href="#key-concepts" title="Permanent link">&para;</a></h2>
+<h3 id="podman-compose-benefits">podman compose  Benefits<a class="headerlink" href="#podman-compose-benefits" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Rootless Containers</strong>: Enhanced security without requiring root privileges</li>
+<li><strong>Development Consistency</strong>: Same environment across all developer machines</li>
+<li><strong>Production Parity</strong>: Mirror production architecture locally</li>
+<li><strong>Resource Efficiency</strong>: Lightweight containers start quickly</li>
+<li><strong>Service Isolation</strong>: Each service runs independently</li>
+<li><strong>Easy Debugging</strong>: Individual service access and log monitoring</li>
+</ul>
+<h3 id="development-vs-production">Development vs Production<a class="headerlink" href="#development-vs-production" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Development</th>
+<th>Production</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Volume Mounts</td>
+<td>Source code hot reload</td>
+<td>Built application artifacts</td>
+</tr>
+<tr>
+<td>Environment Variables</td>
+<td>Development settings</td>
+<td>Production configuration</td>
+</tr>
+<tr>
+<td>Networking</td>
+<td>Direct port access</td>
+<td>Load balancer/ingress</td>
+</tr>
+<tr>
+<td>Persistence</td>
+<td>Temporary volumes</td>
+<td>Persistent storage</td>
+</tr>
+<tr>
+<td>Monitoring</td>
+<td>Basic logging</td>
+<td>Full observability stack</td>
+</tr>
+<tr>
+<td>Security</td>
+<td>Simplified for debugging</td>
+<td>Hardened security policies</td>
+</tr>
+</tbody>
+</table>
+<h3 id="container-orchestration-patterns">Container Orchestration Patterns<a class="headerlink" href="#container-orchestration-patterns" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Multi-service Applications</strong>: Frontend, backend, and database coordination</li>
+<li><strong>Service Dependencies</strong>: Proper startup ordering and health checks</li>
+<li><strong>Development Overrides</strong>: Different configurations for local development</li>
+<li><strong>Hot Reloading</strong>: Live code updates without container rebuilds</li>
+<li><strong>Database Management</strong>: Consistent data seeding and migrations</li>
+</ul>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Podman and podman compose  installed and configured</li>
+<li>Understanding of containerization concepts</li>
+<li>Basic knowledge of YAML configuration</li>
+<li>Familiarity with .NET and React Native development</li>
+<li>Understanding of networking and service communication</li>
+</ul>
+<h3 id="installation-requirements">Installation Requirements<a class="headerlink" href="#installation-requirements" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install Podman and podman compose </span>
+<span class="c1"># On RHEL/CentOS/Fedora</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>podman<span class="w"> </span>podman-compose
+
+<span class="c1"># On macOS</span>
+brew<span class="w"> </span>install<span class="w"> </span>podman
+pip3<span class="w"> </span>install<span class="w"> </span>podman-compose
+
+<span class="c1"># Verify installation</span>
+podman<span class="w"> </span>--version
+podman-compose<span class="w"> </span>--version
+</code></pre></div>
+
+<h2 id="practical-examples">Practical Examples<a class="headerlink" href="#practical-examples" title="Permanent link">&para;</a></h2>
+<h3 id="example-1-full-stack-e-commerce-development-environment">Example 1: Full-Stack E-commerce Development Environment<a class="headerlink" href="#example-1-full-stack-e-commerce-development-environment" title="Permanent link">&para;</a></h3>
+<p>Let's create a comprehensive development environment for an e-commerce application with multiple services.</p>
+<h4 id="step-1-project-structure">Step 1: Project Structure<a class="headerlink" href="#step-1-project-structure" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code>ecommerce-dev/
+├── compose.yml
+├── podman-compose.override.yml
+├── .env
+├── api/
+│   ├── Containerfile.dev
+│   ├── UserService/
+│   ├── ProductService/
+│   ├── OrderService/
+│   └── PaymentService/
+├── web/
+│   ├── Containerfile.dev
+│   └── src/
+├── mobile/
+│   ├── Containerfile.dev
+│   └── src/
+├── database/
+│   ├── init-scripts/
+│   └── seed-data/
+└── infrastructure/
+    ├── nginx/
+    ├── monitoring/
+    └── scripts/
+</code></pre></div>
+
+<h4 id="step-2-main-compose-configuration">Step 2: Main Compose Configuration<a class="headerlink" href="#step-2-main-compose-configuration" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># compose.yml</span>
+<span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;3.8&#39;</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Reverse Proxy and Load Balancer</span>
+<span class="w">  </span><span class="nt">nginx</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.access.redhat.com/ubi8/nginx-120</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecommerce-nginx</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;80:8080&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;443:8443&quot;</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:Z</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./infrastructure/nginx/ssl:/etc/nginx/ssl:Z</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user-service</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">product-service</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">order-service</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-app</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-network</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+
+<span class="w">  </span><span class="c1"># User Management Service</span>
+<span class="w">  </span><span class="nt">user-service</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./api/UserService</span>
+<span class="w">      </span><span class="nt">Containerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Containerfile.dev</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecommerce-user-service</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ASPNETCORE_ENVIRONMENT=Development</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ASPNETCORE_URLS=http://+:8080</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConnectionStrings__DefaultConnection=Host=postgres;Database=userdb;Username=userservice;Password=${DB_PASSWORD}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">JWT__SecretKey=${JWT_SECRET}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">JWT__Issuer=ecommerce-dev</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">JWT__Audience=ecommerce-users</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Redis__ConnectionString=redis:6379</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Logging__LogLevel__Default=Information</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Logging__LogLevel__Microsoft=Warning</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;5001:8080&quot;</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">postgres</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">      </span><span class="nt">redis</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./api/UserService:/app:Z</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user-service-nuget:/root/.nuget/packages</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-network</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CMD&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;curl&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-f&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;http://localhost:8080/health&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">start_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40s</span>
+
+<span class="w">  </span><span class="c1"># Product Catalog Service</span>
+<span class="w">  </span><span class="nt">product-service</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./api/ProductService</span>
+<span class="w">      </span><span class="nt">Containerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Containerfile.dev</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecommerce-product-service</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ASPNETCORE_ENVIRONMENT=Development</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ASPNETCORE_URLS=http://+:8080</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConnectionStrings__DefaultConnection=Host=postgres;Database=productdb;Username=productservice;Password=${DB_PASSWORD}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Redis__ConnectionString=redis:6379</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EventBus__ConnectionString=amqp://guest:guest@rabbitmq:5672</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Storage__ConnectionString=minio:9000</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Storage__AccessKey=${MINIO_ACCESS_KEY}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Storage__SecretKey=${MINIO_SECRET_KEY}</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;5002:8080&quot;</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">postgres</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">      </span><span class="nt">redis</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">      </span><span class="nt">rabbitmq</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./api/ProductService:/app:Z</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">product-service-nuget:/root/.nuget/packages</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-network</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CMD&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;curl&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-f&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;http://localhost:8080/health&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">start_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40s</span>
+
+<span class="w">  </span><span class="c1"># Order Processing Service</span>
+<span class="w">  </span><span class="nt">order-service</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./api/OrderService</span>
+<span class="w">      </span><span class="nt">Containerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Containerfile.dev</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecommerce-order-service</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ASPNETCORE_ENVIRONMENT=Development</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ASPNETCORE_URLS=http://+:8080</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConnectionStrings__DefaultConnection=Host=postgres;Database=orderdb;Username=orderservice;Password=${DB_PASSWORD}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Services__UserService__BaseUrl=http://user-service:8080</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Services__ProductService__BaseUrl=http://product-service:8080</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Services__PaymentService__BaseUrl=http://payment-service:8080</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EventBus__ConnectionString=amqp://guest:guest@rabbitmq:5672</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Redis__ConnectionString=redis:6379</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;5003:8080&quot;</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">postgres</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">      </span><span class="nt">redis</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">      </span><span class="nt">rabbitmq</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">      </span><span class="nt">user-service</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">      </span><span class="nt">product-service</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./api/OrderService:/app:Z</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">order-service-nuget:/root/.nuget/packages</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-network</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CMD&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;curl&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-f&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;http://localhost:8080/health&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">start_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40s</span>
+
+<span class="w">  </span><span class="c1"># Payment Processing Service</span>
+<span class="w">  </span><span class="nt">payment-service</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./api/PaymentService</span>
+<span class="w">      </span><span class="nt">Containerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Containerfile.dev</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecommerce-payment-service</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ASPNETCORE_ENVIRONMENT=Development</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ASPNETCORE_URLS=http://+:8080</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConnectionStrings__DefaultConnection=Host=postgres;Database=paymentdb;Username=paymentservice;Password=${DB_PASSWORD}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EventBus__ConnectionString=amqp://guest:guest@rabbitmq:5672</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PaymentGateway__ApiKey=${PAYMENT_GATEWAY_API_KEY}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PaymentGateway__SecretKey=${PAYMENT_GATEWAY_SECRET_KEY}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PaymentGateway__Environment=sandbox</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;5004:8080&quot;</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">postgres</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">      </span><span class="nt">rabbitmq</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./api/PaymentService:/app:Z</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">payment-service-nuget:/root/.nuget/packages</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-network</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CMD&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;curl&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-f&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;http://localhost:8080/health&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">start_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40s</span>
+
+<span class="w">  </span><span class="c1"># Web Application (React)</span>
+<span class="w">  </span><span class="nt">web-app</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./web</span>
+<span class="w">      </span><span class="nt">Containerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Containerfile.dev</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecommerce-web-app</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NODE_ENV=development</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REACT_APP_API_BASE_URL=http://localhost/api</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REACT_APP_WEBSOCKET_URL=ws://localhost/ws</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHOKIDAR_USEPOLLING=true</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;3000:3000&quot;</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./web:/app:Z</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-app-node-modules:/app/node_modules</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-network</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">stdin_open</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">tty</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">  </span><span class="c1"># PostgreSQL Database</span>
+<span class="w">  </span><span class="nt">postgres</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.access.redhat.com/rhel8/postgresql-13</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecommerce-postgres</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">POSTGRESQL_USER=postgres</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">POSTGRESQL_PASSWORD=${DB_PASSWORD}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">POSTGRESQL_DATABASE=postgres</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;5432:5432&quot;</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres_data:/var/lib/pgsql/data</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./database/init-scripts:/docker-entrypoint-initdb.d:Z</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-network</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CMD-SHELL&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;pg_isready</span><span class="nv"> </span><span class="s">-U</span><span class="nv"> </span><span class="s">postgres&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="w">  </span><span class="c1"># Redis Cache</span>
+<span class="w">  </span><span class="nt">redis</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.access.redhat.com/rhel8/redis-6</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecommerce-redis</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;6379:6379&quot;</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis_data:/var/lib/redis/data</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-network</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CMD&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;redis-cli&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--raw&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;incr&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;ping&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="w">  </span><span class="c1"># RabbitMQ Message Broker</span>
+<span class="w">  </span><span class="nt">rabbitmq</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.access.redhat.com/ubi8/ubi:latest</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecommerce-rabbitmq</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RABBITMQ_DEFAULT_USER=guest</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RABBITMQ_DEFAULT_PASS=guest</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RABBITMQ_DEFAULT_VHOST=/</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;5672:5672&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;15672:15672&quot;</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rabbitmq_data:/var/lib/rabbitmq</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./infrastructure/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:Z</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-network</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rabbitmq-diagnostics -q ping</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="w">  </span><span class="c1"># MinIO Object Storage</span>
+<span class="w">  </span><span class="nt">minio</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">quay.io/minio/minio:latest</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecommerce-minio</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">server /data --console-address &quot;:9001&quot;</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MINIO_ROOT_USER=${MINIO_ACCESS_KEY}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;9000:9000&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;9001:9001&quot;</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">minio_data:/data</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-network</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CMD&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;curl&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-f&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;http://localhost:9000/minio/health/live&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">postgres_data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">redis_data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rabbitmq_data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">minio_data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">user-service-nuget</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">product-service-nuget</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">order-service-nuget</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">payment-service-nuget</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">web-app-node-modules</span><span class="p">:</span>
+
+<span class="nt">networks</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">app-network</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bridge</span>
+<span class="w">    </span><span class="nt">ipam</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">subnet</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">172.20.0.0/16</span>
+</code></pre></div>
+
+<h4 id="step-3-development-override-configuration">Step 3: Development Override Configuration<a class="headerlink" href="#step-3-development-override-configuration" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># podman-compose.override.yml</span>
+<span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;3.8&#39;</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">user-service</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ASPNETCORE_ENVIRONMENT=Development</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Logging__LogLevel__Default=Debug</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Logging__LogLevel__Microsoft=Information</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Development__EnableSensitiveDataLogging=true</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./api/UserService:/app:Z</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user-service-nuget:/root/.nuget/packages</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">      </span><span class="no">bash -c &quot;</span>
+<span class="w">        </span><span class="no">dotnet restore &amp;&amp;</span>
+<span class="w">        </span><span class="no">dotnet watch run --urls http://+:8080</span>
+<span class="w">      </span><span class="no">&quot;</span>
+
+<span class="w">  </span><span class="nt">product-service</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ASPNETCORE_ENVIRONMENT=Development</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Logging__LogLevel__Default=Debug</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Development__EnableSensitiveDataLogging=true</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./api/ProductService:/app:Z</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">product-service-nuget:/root/.nuget/packages</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">      </span><span class="no">bash -c &quot;</span>
+<span class="w">        </span><span class="no">dotnet restore &amp;&amp;</span>
+<span class="w">        </span><span class="no">dotnet watch run --urls http://+:8080</span>
+<span class="w">      </span><span class="no">&quot;</span>
+
+<span class="w">  </span><span class="nt">order-service</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ASPNETCORE_ENVIRONMENT=Development</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Logging__LogLevel__Default=Debug</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Development__EnableSensitiveDataLogging=true</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./api/OrderService:/app:Z</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">order-service-nuget:/root/.nuget/packages</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">      </span><span class="no">bash -c &quot;</span>
+<span class="w">        </span><span class="no">dotnet restore &amp;&amp;</span>
+<span class="w">        </span><span class="no">dotnet watch run --urls http://+:8080</span>
+<span class="w">      </span><span class="no">&quot;</span>
+
+<span class="w">  </span><span class="nt">payment-service</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ASPNETCORE_ENVIRONMENT=Development</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Logging__LogLevel__Default=Debug</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Development__EnableSensitiveDataLogging=true</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./api/PaymentService:/app:Z</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">payment-service-nuget:/root/.nuget/packages</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">      </span><span class="no">bash -c &quot;</span>
+<span class="w">        </span><span class="no">dotnet restore &amp;&amp;</span>
+<span class="w">        </span><span class="no">dotnet watch run --urls http://+:8080</span>
+<span class="w">      </span><span class="no">&quot;</span>
+
+<span class="w">  </span><span class="nt">web-app</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NODE_ENV=development</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FAST_REFRESH=true</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHOKIDAR_USEPOLLING=true</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WATCHPACK_POLLING=true</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm start</span>
+<span class="w">    </span><span class="nt">stdin_open</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">tty</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">  </span><span class="c1"># Development tools</span>
+<span class="w">  </span><span class="nt">pgadmin</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dpage/pgadmin4:latest</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecommerce-pgadmin</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PGADMIN_DEFAULT_EMAIL=admin@example.com</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PGADMIN_DEFAULT_PASSWORD=admin</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;5050:80&quot;</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pgadmin_data:/var/lib/pgadmin</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-network</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+
+<span class="w">  </span><span class="nt">redis-commander</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rediscommander/redis-commander:latest</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecommerce-redis-commander</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REDIS_HOSTS=local:redis:6379</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REDIS_PASSWORD=${REDIS_PASSWORD}</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;8081:8081&quot;</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-network</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pgadmin_data</span><span class="p">:</span>
+</code></pre></div>
+
+<h4 id="step-4-environment-configuration">Step 4: Environment Configuration<a class="headerlink" href="#step-4-environment-configuration" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># .env</span>
+<span class="c1"># Database Configuration</span>
+<span class="nv">DB_PASSWORD</span><span class="o">=</span>dev_password_123
+<span class="nv">POSTGRES_DB</span><span class="o">=</span>ecommerce_dev
+
+<span class="c1"># Redis Configuration</span>
+<span class="nv">REDIS_PASSWORD</span><span class="o">=</span>redis_dev_password
+
+<span class="c1"># JWT Configuration</span>
+<span class="nv">JWT_SECRET</span><span class="o">=</span>your_super_secret_jwt_key_for_development_only
+
+<span class="c1"># MinIO Configuration</span>
+<span class="nv">MINIO_ACCESS_KEY</span><span class="o">=</span>minioadmin
+<span class="nv">MINIO_SECRET_KEY</span><span class="o">=</span>minioadmin123
+
+<span class="c1"># Payment Gateway (Sandbox)</span>
+<span class="nv">PAYMENT_GATEWAY_API_KEY</span><span class="o">=</span>sandbox_api_key
+<span class="nv">PAYMENT_GATEWAY_SECRET_KEY</span><span class="o">=</span>sandbox_secret_key
+
+<span class="c1"># Development Settings</span>
+<span class="nv">ASPNETCORE_ENVIRONMENT</span><span class="o">=</span>Development
+<span class="nv">NODE_ENV</span><span class="o">=</span>development
+</code></pre></div>
+
+<h4 id="step-5-development-Containerfiles">Step 5: Development Containerfiles<a class="headerlink" href="#step-5-development-Containerfiles" title="Permanent link">&para;</a></h4>
+<p><strong>.NET Service Development Containerfile:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c"># api/UserService/Containerfile.dev</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">registry.access.redhat.com/ubi8/dotnet-60</span>
+
+<span class="c"># Install development tools</span>
+<span class="k">USER</span><span class="w"> </span><span class="s">root</span>
+<span class="k">RUN</span><span class="w"> </span>dnf<span class="w"> </span>update<span class="w"> </span>-y<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>curl<span class="w"> </span>procps-ng<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>dnf<span class="w"> </span>clean<span class="w"> </span>all
+
+<span class="c"># Create app user</span>
+<span class="k">RUN</span><span class="w"> </span>groupadd<span class="w"> </span>-r<span class="w"> </span>appuser<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>useradd<span class="w"> </span>-r<span class="w"> </span>-g<span class="w"> </span>appuser<span class="w"> </span>appuser
+
+<span class="c"># Set working directory</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+
+<span class="c"># Copy project files</span>
+<span class="k">COPY</span><span class="w"> </span>--chown<span class="o">=</span>appuser:appuser<span class="w"> </span>*.csproj<span class="w"> </span>./
+<span class="k">RUN</span><span class="w"> </span>dotnet<span class="w"> </span>restore
+
+<span class="c"># Copy source code</span>
+<span class="k">COPY</span><span class="w"> </span>--chown<span class="o">=</span>appuser:appuser<span class="w"> </span>.<span class="w"> </span>./
+
+<span class="c"># Switch to app user</span>
+<span class="k">USER</span><span class="w"> </span><span class="s">appuser</span>
+
+<span class="c"># Expose port</span>
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">8080</span>
+
+<span class="c"># Install dotnet tools for hot reload</span>
+<span class="k">RUN</span><span class="w"> </span>dotnet<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>--global<span class="w"> </span>dotnet-ef
+<span class="k">RUN</span><span class="w"> </span>dotnet<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>--global<span class="w"> </span>dotnet-watch
+<span class="k">ENV</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$PATH</span><span class="s2">:/home/appuser/.dotnet/tools&quot;</span>
+
+<span class="c"># Default command for development (can be overridden)</span>
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;dotnet&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;watch&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;run&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;--urls&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;http://+:8080&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<p><strong>React Development Containerfile:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c"># web/Containerfile.dev</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">registry.access.redhat.com/ubi8/nodejs-16</span>
+
+<span class="c"># Install development tools</span>
+<span class="k">USER</span><span class="w"> </span><span class="s">root</span>
+<span class="k">RUN</span><span class="w"> </span>dnf<span class="w"> </span>update<span class="w"> </span>-y<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>git<span class="w"> </span>curl<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>dnf<span class="w"> </span>clean<span class="w"> </span>all
+
+<span class="c"># Create app user</span>
+<span class="k">RUN</span><span class="w"> </span>groupadd<span class="w"> </span>-r<span class="w"> </span>appuser<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>useradd<span class="w"> </span>-r<span class="w"> </span>-g<span class="w"> </span>appuser<span class="w"> </span>appuser
+
+<span class="c"># Set working directory</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+
+<span class="c"># Copy package files</span>
+<span class="k">COPY</span><span class="w"> </span>--chown<span class="o">=</span>appuser:appuser<span class="w"> </span>package*.json<span class="w"> </span>./
+
+<span class="c"># Switch to app user</span>
+<span class="k">USER</span><span class="w"> </span><span class="s">appuser</span>
+
+<span class="c"># Install dependencies</span>
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>ci
+
+<span class="c"># Copy source code</span>
+<span class="k">COPY</span><span class="w"> </span>--chown<span class="o">=</span>appuser:appuser<span class="w"> </span>.<span class="w"> </span>./
+
+<span class="c"># Expose port</span>
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">3000</span>
+
+<span class="c"># Set environment for development</span>
+<span class="k">ENV</span><span class="w"> </span><span class="nv">NODE_ENV</span><span class="o">=</span>development
+<span class="k">ENV</span><span class="w"> </span><span class="nv">CHOKIDAR_USEPOLLING</span><span class="o">=</span><span class="nb">true</span>
+<span class="k">ENV</span><span class="w"> </span><span class="nv">FAST_REFRESH</span><span class="o">=</span><span class="nb">true</span>
+
+<span class="c"># Start development server</span>
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;npm&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;start&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<h3 id="example-2-react-native-development-environment">Example 2: React Native Development Environment<a class="headerlink" href="#example-2-react-native-development-environment" title="Permanent link">&para;</a></h3>
+<p>For React Native development, we need a specialized setup:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># mobile-dev/compose.yml</span>
+<span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;3.8&#39;</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># React Native Metro Bundler</span>
+<span class="w">  </span><span class="nt">metro-bundler</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">      </span><span class="nt">Containerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Containerfile.metro</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rn-metro-bundler</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NODE_ENV=development</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REACT_NATIVE_PACKAGER_HOSTNAME=0.0.0.0</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;8081:8081&quot;</span><span class="w">  </span><span class="c1"># Metro bundler</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;9090:9090&quot;</span><span class="w">  </span><span class="c1"># Flipper</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./src:/app/src:Z</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./assets:/app/assets:Z</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rn-node-modules:/app/node_modules</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mobile-network</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+
+<span class="w">  </span><span class="c1"># Android Development Environment</span>
+<span class="w">  </span><span class="nt">android-dev</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">      </span><span class="nt">Containerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Containerfile.android</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rn-android-dev</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISPLAY=${DISPLAY}</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/tmp/.X11-unix:/tmp/.X11-unix:Z</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./:/app:Z</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">android-sdk:/opt/android-sdk</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gradle-cache:/root/.gradle</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mobile-network</span>
+<span class="w">    </span><span class="nt">privileged</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+
+<span class="w">  </span><span class="c1"># API Mock Server for Development</span>
+<span class="w">  </span><span class="nt">mock-api</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.access.redhat.com/ubi8/nodejs-16</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rn-mock-api</span>
+<span class="w">    </span><span class="nt">working_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/app</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">      </span><span class="no">bash -c &quot;</span>
+<span class="w">        </span><span class="no">npm install -g json-server &amp;&amp;</span>
+<span class="w">        </span><span class="no">json-server --watch db.json --host 0.0.0.0 --port 3001</span>
+<span class="w">      </span><span class="no">&quot;</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;3001:3001&quot;</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./mock-data:/app:Z</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mobile-network</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rn-node-modules</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">android-sdk</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">gradle-cache</span><span class="p">:</span>
+
+<span class="nt">networks</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mobile-network</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bridge</span>
+</code></pre></div>
+
+<h3 id="example-3-database-management-and-seeding">Example 3: Database Management and Seeding<a class="headerlink" href="#example-3-database-management-and-seeding" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- database/init-scripts/01-create-databases.sql</span>
+<span class="c1">-- Create separate databases for each service</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">userdb</span><span class="p">;</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">productdb</span><span class="p">;</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">orderdb</span><span class="p">;</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">paymentdb</span><span class="p">;</span>
+
+<span class="c1">-- Create service users</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="n">userservice</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="k">ENCRYPTED</span><span class="w"> </span><span class="n">PASSWORD</span><span class="w"> </span><span class="s1">&#39;dev_password_123&#39;</span><span class="p">;</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="n">productservice</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="k">ENCRYPTED</span><span class="w"> </span><span class="n">PASSWORD</span><span class="w"> </span><span class="s1">&#39;dev_password_123&#39;</span><span class="p">;</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="n">orderservice</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="k">ENCRYPTED</span><span class="w"> </span><span class="n">PASSWORD</span><span class="w"> </span><span class="s1">&#39;dev_password_123&#39;</span><span class="p">;</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="n">paymentservice</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="k">ENCRYPTED</span><span class="w"> </span><span class="n">PASSWORD</span><span class="w"> </span><span class="s1">&#39;dev_password_123&#39;</span><span class="p">;</span>
+
+<span class="c1">-- Grant permissions</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">userdb</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">userservice</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">productdb</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">productservice</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">orderdb</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">orderservice</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">paymentdb</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">paymentservice</span><span class="p">;</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c1">-- database/init-scripts/02-seed-data.sql</span>
+<span class="err">\</span><span class="k">c</span><span class="w"> </span><span class="n">productdb</span><span class="p">;</span>
+
+<span class="c1">-- Sample product data for development</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">description</span><span class="p">,</span><span class="w"> </span><span class="n">price</span><span class="p">,</span><span class="w"> </span><span class="n">stock_quantity</span><span class="p">,</span><span class="w"> </span><span class="n">category_id</span><span class="p">,</span><span class="w"> </span><span class="n">created_at</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span>
+<span class="p">(</span><span class="s1">&#39;11111111-1111-1111-1111-111111111111&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Gaming Laptop&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;High-performance gaming laptop&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1299</span><span class="p">.</span><span class="mi">99</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;22222222-2222-2222-2222-222222222222&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">NOW</span><span class="p">()),</span>
+<span class="p">(</span><span class="s1">&#39;33333333-3333-3333-3333-333333333333&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Wireless Mouse&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Ergonomic wireless mouse&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">29</span><span class="p">.</span><span class="mi">99</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;44444444-4444-4444-4444-444444444444&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">NOW</span><span class="p">()),</span>
+<span class="p">(</span><span class="s1">&#39;55555555-5555-5555-5555-555555555555&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Mechanical Keyboard&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;RGB mechanical keyboard&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">129</span><span class="p">.</span><span class="mi">99</span><span class="p">,</span><span class="w"> </span><span class="mi">25</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;44444444-4444-4444-4444-444444444444&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">NOW</span><span class="p">());</span>
+
+<span class="err">\</span><span class="k">c</span><span class="w"> </span><span class="n">userdb</span><span class="p">;</span>
+
+<span class="c1">-- Sample user data for development</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">first_name</span><span class="p">,</span><span class="w"> </span><span class="n">last_name</span><span class="p">,</span><span class="w"> </span><span class="n">password_hash</span><span class="p">,</span><span class="w"> </span><span class="n">created_at</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span>
+<span class="p">(</span><span class="s1">&#39;aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;john.doe@example.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;John&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Doe&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;$2a$11$example_hash&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">NOW</span><span class="p">()),</span>
+<span class="p">(</span><span class="s1">&#39;bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;jane.smith@example.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Jane&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Smith&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;$2a$11$example_hash&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">NOW</span><span class="p">());</span>
+</code></pre></div>
+
+<h2 id="common-pitfalls">Common Pitfalls<a class="headerlink" href="#common-pitfalls" title="Permanent link">&para;</a></h2>
+<h3 id="1-volume-mount-issues">1. Volume Mount Issues<a class="headerlink" href="#1-volume-mount-issues" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: File permission errors or changes not reflecting in containers.</p>
+<p><strong>Solution</strong>: Use proper SELinux contexts and understand rootless mapping:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">api</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># Correct: Use :Z for SELinux relabeling</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./src:/app/src:Z</span>
+<span class="w">      </span><span class="c1"># Incorrect: Missing SELinux context</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./src:/app/src</span>
+</code></pre></div>
+
+<h3 id="2-service-startup-dependencies">2. Service Startup Dependencies<a class="headerlink" href="#2-service-startup-dependencies" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: Services starting before dependencies are ready.</p>
+<p><strong>Solution</strong>: Use proper health checks and depends_on conditions:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">api</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">database</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">      </span><span class="nt">redis</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CMD&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;curl&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-f&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;http://localhost:8080/health&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">start_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40s</span>
+</code></pre></div>
+
+<h3 id="3-network-connectivity-issues">3. Network Connectivity Issues<a class="headerlink" href="#3-network-connectivity-issues" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: Services can't communicate or resolve each other's names.</p>
+<p><strong>Solution</strong>: Use explicit networks and proper service naming:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">networks</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">app-network</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bridge</span>
+<span class="w">    </span><span class="nt">ipam</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">subnet</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">172.20.0.0/16</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">api</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-network</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DATABASE_HOST=postgres</span><span class="w">  </span><span class="c1"># Use service name for internal communication</span>
+</code></pre></div>
+
+<h3 id="4-resource-consumption">4. Resource Consumption<a class="headerlink" href="#4-resource-consumption" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: Development environment consuming too many system resources.</p>
+<p><strong>Solution</strong>: Set resource limits and use efficient base images:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">api</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">deploy</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">512M</span>
+<span class="w">          </span><span class="nt">cpus</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0.5&#39;</span>
+<span class="w">        </span><span class="nt">reservations</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256M</span>
+<span class="w">          </span><span class="nt">cpus</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0.25&#39;</span>
+</code></pre></div>
+
+<h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
+<h3 id="1-environment-configuration">1. Environment Configuration<a class="headerlink" href="#1-environment-configuration" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Use environment-specific overrides</span>
+<span class="c1"># compose.yml - Base configuration</span>
+<span class="c1"># podman-compose.override.yml - Development overrides</span>
+<span class="c1"># podman-compose.prod.yml - Production configuration</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">api</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ASPNETCORE_ENVIRONMENT=${ENVIRONMENT:-Development}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DATABASE_URL=${DATABASE_URL}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REDIS_URL=${REDIS_URL}</span>
+</code></pre></div>
+
+<h3 id="2-development-scripts">2. Development Scripts<a class="headerlink" href="#2-development-scripts" title="Permanent link">&para;</a></h3>
+<p>Create helper scripts for common development tasks:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># scripts/dev-start.sh</span>
+
+<span class="nb">set</span><span class="w"> </span>-e
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;🚀 Starting development environment...&quot;</span>
+
+<span class="c1"># Load environment variables</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-f<span class="w"> </span>.env<span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">export</span><span class="w"> </span><span class="k">$(</span>grep<span class="w"> </span>-v<span class="w"> </span><span class="s1">&#39;^#&#39;</span><span class="w"> </span>.env<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="k">)</span>
+<span class="k">fi</span>
+
+<span class="c1"># Start services</span>
+podman-compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>postgres<span class="w"> </span>redis<span class="w"> </span>rabbitmq
+
+<span class="c1"># Wait for databases to be ready</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;⏳ Waiting for databases...&quot;</span>
+sleep<span class="w"> </span><span class="m">10</span>
+
+<span class="c1"># Run database migrations</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;🔄 Running database migrations...&quot;</span>
+podman-compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>user-service<span class="w"> </span>dotnet<span class="w"> </span>ef<span class="w"> </span>database<span class="w"> </span>update
+podman-compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>product-service<span class="w"> </span>dotnet<span class="w"> </span>ef<span class="w"> </span>database<span class="w"> </span>update
+podman-compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>order-service<span class="w"> </span>dotnet<span class="w"> </span>ef<span class="w"> </span>database<span class="w"> </span>update
+
+<span class="c1"># Start application services</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;🔧 Starting application services...&quot;</span>
+podman-compose<span class="w"> </span>up<span class="w"> </span>-d
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✅ Development environment is ready!&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;🌐 Web app: http://localhost:3000&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;📊 API docs: http://localhost/swagger&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;🗄️  Database admin: http://localhost:5050&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;📦 Redis admin: http://localhost:8081&quot;</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># scripts/dev-stop.sh</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;🛑 Stopping development environment...&quot;</span>
+podman-compose<span class="w"> </span>down
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;🧹 Cleaning up...&quot;</span>
+podman<span class="w"> </span>system<span class="w"> </span>prune<span class="w"> </span>-f<span class="w"> </span>--volumes
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✅ Development environment stopped!&quot;</span>
+</code></pre></div>
+
+<h3 id="3-hot-reloading-configuration">3. Hot Reloading Configuration<a class="headerlink" href="#3-hot-reloading-configuration" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Program.cs for .NET services</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">app</span><span class="p">.</span><span class="n">Environment</span><span class="p">.</span><span class="n">IsDevelopment</span><span class="p">())</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">app</span><span class="p">.</span><span class="n">UseDeveloperExceptionPage</span><span class="p">();</span>
+<span class="w">    </span><span class="n">app</span><span class="p">.</span><span class="n">UseSwagger</span><span class="p">();</span>
+<span class="w">    </span><span class="n">app</span><span class="p">.</span><span class="n">UseSwaggerUI</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Enable detailed errors for development</span>
+<span class="w">    </span><span class="n">app</span><span class="p">.</span><span class="n">UseDeveloperExceptionPage</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Enable CORS for local development</span>
+<span class="w">    </span><span class="n">app</span><span class="p">.</span><span class="n">UseCors</span><span class="p">(</span><span class="n">builder</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">builder</span>
+<span class="w">        </span><span class="p">.</span><span class="n">AllowAnyOrigin</span><span class="p">()</span>
+<span class="w">        </span><span class="p">.</span><span class="n">AllowAnyMethod</span><span class="p">()</span>
+<span class="w">        </span><span class="p">.</span><span class="n">AllowAnyHeader</span><span class="p">());</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="4-logging-and-debugging">4. Logging and Debugging<a class="headerlink" href="#4-logging-and-debugging" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">api</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Logging__LogLevel__Default=Debug</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Logging__LogLevel__Microsoft=Information</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Logging__Console__IncludeScopes=true</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./logs:/app/logs:Z</span>
+</code></pre></div>
+
+<h3 id="5-security-in-development">5. Security in Development<a class="headerlink" href="#5-security-in-development" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Use secrets for sensitive data even in development</span>
+<span class="nt">secrets</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">db_password</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./secrets/db_password.txt</span>
+<span class="w">  </span><span class="nt">jwt_secret</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./secrets/jwt_secret.txt</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">api</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">secrets</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db_password</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jwt_secret</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConnectionStrings__DefaultConnection=Host=postgres;Database=mydb;Username=user;Password_File=/run/secrets/db_password</span>
+</code></pre></div>
+
+<h2 id="tools-and-resources">Tools and Resources<a class="headerlink" href="#tools-and-resources" title="Permanent link">&para;</a></h2>
+<h3 id="development-tools">Development Tools<a class="headerlink" href="#development-tools" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Podman Desktop</strong>: GUI for container management</li>
+<li><strong>Visual Studio Code</strong>: With Podman and development container extensions</li>
+<li><strong>Postman</strong>: API testing and documentation</li>
+<li><strong>pgAdmin</strong>: PostgreSQL administration</li>
+<li><strong>Redis Commander</strong>: Redis data browser</li>
+</ul>
+<h3 id="monitoring-and-debugging">Monitoring and Debugging<a class="headerlink" href="#monitoring-and-debugging" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Add to podman-compose.override.yml for development monitoring</span>
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">prometheus</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prom/prometheus:latest</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;9090:9090&quot;</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./monitoring/prometheus-dev.yml:/etc/prometheus/prometheus.yml:Z</span>
+
+<span class="w">  </span><span class="nt">grafana</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">grafana/grafana:latest</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;3001:3000&quot;</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GF_SECURITY_ADMIN_PASSWORD=admin</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:Z</span>
+</code></pre></div>
+
+<h3 id="useful-commands">Useful Commands<a class="headerlink" href="#useful-commands" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Start all services</span>
+podman-compose<span class="w"> </span>up<span class="w"> </span>-d
+
+<span class="c1"># View logs for specific service</span>
+podman-compose<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>user-service
+
+<span class="c1"># Execute commands in running container</span>
+podman-compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>user-service<span class="w"> </span>bash
+
+<span class="c1"># Scale a service</span>
+podman-compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--scale<span class="w"> </span>product-service<span class="o">=</span><span class="m">2</span>
+
+<span class="c1"># Rebuild and restart a service</span>
+podman-compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build<span class="w"> </span>user-service
+
+<span class="c1"># Stop and remove all containers</span>
+podman-compose<span class="w"> </span>down
+
+<span class="c1"># Remove volumes (careful with data loss)</span>
+podman-compose<span class="w"> </span>down<span class="w"> </span>-v
+
+<span class="c1"># View resource usage</span>
+podman<span class="w"> </span>stats
+
+<span class="c1"># Clean up unused resources</span>
+podman<span class="w"> </span>system<span class="w"> </span>prune<span class="w"> </span>-f
+</code></pre></div>
+
+<h2 id="hands-on-exercise">Hands-on Exercise<a class="headerlink" href="#hands-on-exercise" title="Permanent link">&para;</a></h2>
+<h3 id="exercise-complete-microservices-development-environment">Exercise: Complete Microservices Development Environment<a class="headerlink" href="#exercise-complete-microservices-development-environment" title="Permanent link">&para;</a></h3>
+<p>Create a comprehensive development environment for a microservices-based application.</p>
+<p><strong>Requirements:</strong></p>
+<ol>
+<li><strong>Application Services:</strong></li>
+<li>Authentication service (.NET)</li>
+<li>Product catalog service (.NET)</li>
+<li>Order management service (.NET)</li>
+<li>Notification service (.NET)</li>
+<li>Web frontend (React)</li>
+<li>
+<p>Mobile app development (React Native)</p>
+</li>
+<li>
+<p><strong>Infrastructure Services:</strong></p>
+</li>
+<li>PostgreSQL database with multiple schemas</li>
+<li>Redis for caching and sessions</li>
+<li>RabbitMQ for event-driven communication</li>
+<li>MinIO for file storage</li>
+<li>
+<p>Nginx as reverse proxy</p>
+</li>
+<li>
+<p><strong>Development Features:</strong></p>
+</li>
+<li>Hot reloading for all services</li>
+<li>Database seeding with test data</li>
+<li>Automated database migrations</li>
+<li>Health checks for all services</li>
+<li>Centralized logging</li>
+<li>
+<p>Development monitoring dashboard</p>
+</li>
+<li>
+<p><strong>Developer Experience:</strong></p>
+</li>
+<li>One-command startup and shutdown</li>
+<li>Consistent environment across team</li>
+<li>Easy debugging and testing</li>
+<li>Documentation and helper scripts</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ol>
+<li>Complete podman compose  configuration</li>
+<li>Development Containerfiles for each service</li>
+<li>Database initialization and seeding scripts</li>
+<li>Development helper scripts</li>
+<li>Environment configuration management</li>
+<li>Documentation for onboarding new developers</li>
+<li>Performance optimization guide</li>
+</ol>
+<p><strong>Evaluation Criteria:</strong></p>
+<ul>
+<li>Environment startup time (&lt; 2 minutes)</li>
+<li>Resource efficiency (&lt; 4GB RAM usage)</li>
+<li>Hot reload functionality</li>
+<li>Service communication reliability</li>
+<li>Documentation quality</li>
+<li>Developer onboarding experience</li>
+</ul>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>Local development with podman compose  provides a powerful foundation for modern application development. Key takeaways include:</p>
+<ul>
+<li><strong>Consistent Environments</strong>: podman compose  ensures all developers work with identical setups</li>
+<li><strong>Production Parity</strong>: Local environments mirror production architecture and configuration</li>
+<li><strong>Enhanced Security</strong>: Rootless containers provide better security isolation</li>
+<li><strong>Developer Productivity</strong>: Hot reloading and automated setup reduce development friction</li>
+<li><strong>Service Orchestration</strong>: Multi-service applications can be managed as cohesive units</li>
+<li><strong>Resource Efficiency</strong>: Lightweight containers minimize system resource usage</li>
+<li><strong>Debugging Capabilities</strong>: Individual service access and comprehensive logging aid troubleshooting</li>
+</ul>
+<p>By implementing these practices with .NET and React Native applications using podman compose  and Red Hat UBI images, development teams can achieve faster development cycles, improved code quality, and seamless collaboration. The investment in setting up comprehensive development environments pays dividends in reduced debugging time, consistent behavior across environments, and faster onboarding of new team members.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../bdd_tdd/" class="btn btn-neutral float-left" title="BDD and TDD Practices"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../mocking_dependent_systems_apis/" class="btn btn-neutral float-right" title="API Mocking Strategies">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../bdd_tdd/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../mocking_dependent_systems_apis/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

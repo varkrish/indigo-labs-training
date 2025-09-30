@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>BDD and TDD Practices - Modern Software Development Practices</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "BDD and TDD Practices";
+        var mkdocs_page_input_path = "4_testing/bdd_tdd.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/Containerfile.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/bash.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> Modern Software Development Practices
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">1. Cloud Fundamentals</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../1_cloud/hybrid_cloud/">Hybrid Cloud</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../1_cloud/cloud_native_development/">Cloud Native Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../1_cloud/cncf/">CNCF Landscape</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">2. Containerization</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../2_containerization/containers/">Container Fundamentals</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../2_containerization/container_engines_crio/">CRI-O Container Engine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../2_containerization/k8s_openshift/">Kubernetes & OpenShift</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">3. Development Foundations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/requirement_centric_development/">Requirement-Centric Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/12_factor_app/">12-Factor App Methodology</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/microservices/">Microservices Architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/open_practices_inner_loop/">Inner Loop Practices</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/open_practices_outer_loop/">Outer Loop Practices</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/nfrs/">Non-Functional Requirements</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">4. Agile Development & Testing</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../clean_architecture/">Clean Architecture</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">BDD and TDD Practices</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-concepts">Key Concepts</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#test-driven-development-tdd">Test-Driven Development (TDD)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#behavior-driven-development-bdd">Behavior-Driven Development (BDD)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#key-benefits">Key Benefits</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#required-testing-frameworks">Required Testing Frameworks</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#practical-examples">Practical Examples</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#example-1-tdd-with-net-web-api">Example 1: TDD with .NET Web API</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#step-1-set-up-the-testing-environment">Step 1: Set Up the Testing Environment</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-2-write-failing-test-red-phase">Step 2: Write Failing Test (Red Phase)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-3-make-tests-pass-green-phase">Step 3: Make Tests Pass (Green Phase)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-4-refactor-and-improve">Step 4: Refactor and Improve</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-2-bdd-with-specflow-net">Example 2: BDD with SpecFlow (.NET)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#step-1-set-up-specflow">Step 1: Set Up SpecFlow</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-2-create-feature-file">Step 2: Create Feature File</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-3-implement-step-definitions">Step 3: Implement Step Definitions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-3-tdd-with-react-native">Example 3: TDD with React Native</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#step-1-set-up-testing-environment">Step 1: Set Up Testing Environment</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-2-write-failing-test">Step 2: Write Failing Test</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-3-implement-component-green-phase">Step 3: Implement Component (Green Phase)</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#common-pitfalls">Common Pitfalls</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-writing-tests-after-implementation">1. Writing Tests After Implementation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-over-mocking-in-tests">2. Over-Mocking in Tests</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-poor-bdd-scenario-writing">3. Poor BDD Scenario Writing</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-ignoring-test-performance">4. Ignoring Test Performance</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tdd-best-practices">TDD Best Practices</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#bdd-best-practices">BDD Best Practices</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#integration-with-containers">Integration with Containers</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tools-and-resources">Tools and Resources</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#net-testing-tools">.NET Testing Tools</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#react-native-testing-tools">React Native Testing Tools</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#container-testing-setup">Container Testing Setup</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#useful-resources">Useful Resources</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#hands-on-exercise">Hands-on Exercise</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#exercise-complete-e-commerce-testing-suite">Exercise: Complete E-commerce Testing Suite</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../using_composefilesforlocaldev/">Local Development with podman compose </a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../mocking_dependent_systems_apis/">API Mocking Strategies</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../secure_coding/">Secure Coding Practices</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../performance_testing_containers/">Performance Testing in Containers</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">5. CI/CD</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ci_cd/cloud_native_ci_cd/">Cloud-Native CI/CD</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">6. Observability</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../observability/dotnet_open_telemetry/">.NET OpenTelemetry</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">7. Red Hat Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../redhat_ecosystem/redhat_software_collections/">Red Hat Software Collections</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../redhat_ecosystem/redhat_supply_chain_ubi/">UBI and Supply Chain Security</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Modern Software Development Practices</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">4. Agile Development & Testing</li>
+      <li class="breadcrumb-item active">BDD and TDD Practices</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="bdd-and-tdd-practices">BDD and TDD Practices<a class="headerlink" href="#bdd-and-tdd-practices" title="Permanent link">&para;</a></h1>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>Behavior-Driven Development (BDD) and Test-Driven Development (TDD) are fundamental practices for modern software development that ensure code quality, maintainability, and alignment with business requirements. This guide provides practical guidance for junior and mid-senior developers working with .NET and React Native applications, demonstrating these practices using Podman containers and Red Hat UBI images.</p>
+<p>BDD focuses on defining application behavior through collaboration between developers, testers, and business stakeholders, while TDD emphasizes writing tests before implementation code. Together, they create a robust development workflow that produces reliable, well-documented software.</p>
+<h2 id="key-concepts">Key Concepts<a class="headerlink" href="#key-concepts" title="Permanent link">&para;</a></h2>
+<h3 id="test-driven-development-tdd">Test-Driven Development (TDD)<a class="headerlink" href="#test-driven-development-tdd" title="Permanent link">&para;</a></h3>
+<p>TDD follows the "Red-Green-Refactor" cycle:</p>
+<ol>
+<li><strong>Red</strong>: Write a failing test that defines desired functionality</li>
+<li><strong>Green</strong>: Write minimal code to make the test pass</li>
+<li><strong>Refactor</strong>: Improve code quality while maintaining test coverage</li>
+</ol>
+<h3 id="behavior-driven-development-bdd">Behavior-Driven Development (BDD)<a class="headerlink" href="#behavior-driven-development-bdd" title="Permanent link">&para;</a></h3>
+<p>BDD extends TDD by:
+- Using natural language to describe behavior
+- Focusing on business value and user outcomes
+- Encouraging collaboration between technical and non-technical stakeholders
+- Following Given-When-Then syntax for scenarios</p>
+<h3 id="key-benefits">Key Benefits<a class="headerlink" href="#key-benefits" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Early Bug Detection</strong>: Issues are caught during development, not after deployment</li>
+<li><strong>Living Documentation</strong>: Tests serve as executable specifications</li>
+<li><strong>Design Improvement</strong>: Test-first approach leads to better code architecture</li>
+<li><strong>Confidence in Changes</strong>: Comprehensive test coverage enables safe refactoring</li>
+<li><strong>Business Alignment</strong>: BDD ensures features meet actual business needs</li>
+</ul>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<ul>
+<li>.NET 6+ SDK and Entity Framework knowledge</li>
+<li>React Native and TypeScript familiarity</li>
+<li>Basic understanding of testing concepts</li>
+<li>Podman installed and configured</li>
+<li>Access to Red Hat UBI container images</li>
+</ul>
+<h3 id="required-testing-frameworks">Required Testing Frameworks<a class="headerlink" href="#required-testing-frameworks" title="Permanent link">&para;</a></h3>
+<p><strong>.NET Stack:</strong>
+- xUnit for unit testing
+- SpecFlow for BDD scenarios
+- Moq for mocking
+- Testcontainers for integration testing</p>
+<p><strong>React Native Stack:</strong>
+- Jest for unit testing
+- React Native Testing Library
+- Cucumber.js for BDD scenarios
+- MSW (Mock Service Worker) for API mocking</p>
+<h2 id="practical-examples">Practical Examples<a class="headerlink" href="#practical-examples" title="Permanent link">&para;</a></h2>
+<h3 id="example-1-tdd-with-net-web-api">Example 1: TDD with .NET Web API<a class="headerlink" href="#example-1-tdd-with-net-web-api" title="Permanent link">&para;</a></h3>
+<p>Let's implement a product catalog API using TDD principles.</p>
+<h4 id="step-1-set-up-the-testing-environment">Step 1: Set Up the Testing Environment<a class="headerlink" href="#step-1-set-up-the-testing-environment" title="Permanent link">&para;</a></h4>
+<p>Create a new .NET solution with test project:</p>
+<div class="codehilite"><pre><span></span><code>mkdir<span class="w"> </span>ProductCatalog
+<span class="nb">cd</span><span class="w"> </span>ProductCatalog
+dotnet<span class="w"> </span>new<span class="w"> </span>sln
+dotnet<span class="w"> </span>new<span class="w"> </span>webapi<span class="w"> </span>-n<span class="w"> </span>ProductCatalog.Api
+dotnet<span class="w"> </span>new<span class="w"> </span>xunit<span class="w"> </span>-n<span class="w"> </span>ProductCatalog.Tests
+dotnet<span class="w"> </span>sln<span class="w"> </span>add<span class="w"> </span>ProductCatalog.Api<span class="w"> </span>ProductCatalog.Tests
+</code></pre></div>
+
+<p>Add required testing packages:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>ProductCatalog.Tests
+dotnet<span class="w"> </span>add<span class="w"> </span>package<span class="w"> </span>Moq
+dotnet<span class="w"> </span>add<span class="w"> </span>package<span class="w"> </span>Microsoft.AspNetCore.Mvc.Testing
+dotnet<span class="w"> </span>add<span class="w"> </span>package<span class="w"> </span>Testcontainers.PostgreSql
+</code></pre></div>
+
+<h4 id="step-2-write-failing-test-red-phase">Step 2: Write Failing Test (Red Phase)<a class="headerlink" href="#step-2-write-failing-test-red-phase" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1">// ProductCatalog.Tests/Controllers/ProductsControllerTests.cs</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Xunit</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Moq</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Mvc</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">ProductCatalog.Api.Controllers</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">ProductCatalog.Api.Models</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">ProductCatalog.Api.Services</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">ProductCatalog.Tests.Controllers</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ProductsControllerTests</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">Mock</span><span class="o">&lt;</span><span class="n">IProductService</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_mockProductService</span><span class="p">;</span>
+<span class="w">        </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">ProductsController</span><span class="w"> </span><span class="n">_controller</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="nf">ProductsControllerTests</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_mockProductService</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Mock</span><span class="o">&lt;</span><span class="n">IProductService</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">            </span><span class="n">_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ProductsController</span><span class="p">(</span><span class="n">_mockProductService</span><span class="p">.</span><span class="n">Object</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Fact]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">GetProducts_ReturnsOkResult_WithListOfProducts</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// Arrange</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">expectedProducts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="k">new</span><span class="w"> </span><span class="n">Product</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">Name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Laptop&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Price</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">999.99m</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                </span><span class="k">new</span><span class="w"> </span><span class="n">Product</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">Name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Mouse&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Price</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">29.99m</span><span class="w"> </span><span class="p">}</span>
+<span class="w">            </span><span class="p">};</span>
+
+<span class="w">            </span><span class="n">_mockProductService</span>
+<span class="w">                </span><span class="p">.</span><span class="n">Setup</span><span class="p">(</span><span class="n">service</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">service</span><span class="p">.</span><span class="n">GetAllProductsAsync</span><span class="p">())</span>
+<span class="w">                </span><span class="p">.</span><span class="n">ReturnsAsync</span><span class="p">(</span><span class="n">expectedProducts</span><span class="p">);</span>
+
+<span class="w">            </span><span class="c1">// Act</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_controller</span><span class="p">.</span><span class="n">GetProducts</span><span class="p">();</span>
+
+<span class="w">            </span><span class="c1">// Assert</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">okResult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Assert</span><span class="p">.</span><span class="n">IsType</span><span class="o">&lt;</span><span class="n">OkObjectResult</span><span class="o">&gt;</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Result</span><span class="p">);</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Assert</span><span class="p">.</span><span class="n">IsType</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="n">okResult</span><span class="p">.</span><span class="n">Value</span><span class="p">);</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">products</span><span class="p">.</span><span class="n">Count</span><span class="p">);</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="s">&quot;Laptop&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">Name</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Fact]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">CreateProduct_WithValidProduct_ReturnsCreatedResult</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// Arrange</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">newProduct</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CreateProductRequest</span><span class="w"> </span>
+<span class="w">            </span><span class="p">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">Name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Keyboard&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                </span><span class="n">Price</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">79.99m</span><span class="p">,</span>
+<span class="w">                </span><span class="n">Description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Mechanical keyboard&quot;</span>
+<span class="w">            </span><span class="p">};</span>
+
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">createdProduct</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Product</span><span class="w"> </span>
+<span class="w">            </span><span class="p">{</span><span class="w"> </span>
+<span class="w">                </span><span class="n">Id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                </span><span class="n">Name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newProduct</span><span class="p">.</span><span class="n">Name</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                </span><span class="n">Price</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newProduct</span><span class="p">.</span><span class="n">Price</span><span class="p">,</span>
+<span class="w">                </span><span class="n">Description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newProduct</span><span class="p">.</span><span class="n">Description</span>
+<span class="w">            </span><span class="p">};</span>
+
+<span class="w">            </span><span class="n">_mockProductService</span>
+<span class="w">                </span><span class="p">.</span><span class="n">Setup</span><span class="p">(</span><span class="n">service</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">service</span><span class="p">.</span><span class="n">CreateProductAsync</span><span class="p">(</span><span class="n">It</span><span class="p">.</span><span class="n">IsAny</span><span class="o">&lt;</span><span class="n">CreateProductRequest</span><span class="o">&gt;</span><span class="p">()))</span>
+<span class="w">                </span><span class="p">.</span><span class="n">ReturnsAsync</span><span class="p">(</span><span class="n">createdProduct</span><span class="p">);</span>
+
+<span class="w">            </span><span class="c1">// Act</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_controller</span><span class="p">.</span><span class="n">CreateProduct</span><span class="p">(</span><span class="n">newProduct</span><span class="p">);</span>
+
+<span class="w">            </span><span class="c1">// Assert</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">createdResult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Assert</span><span class="p">.</span><span class="n">IsType</span><span class="o">&lt;</span><span class="n">CreatedAtActionResult</span><span class="o">&gt;</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Result</span><span class="p">);</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Assert</span><span class="p">.</span><span class="n">IsType</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;</span><span class="p">(</span><span class="n">createdResult</span><span class="p">.</span><span class="n">Value</span><span class="p">);</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="s">&quot;Keyboard&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">product</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="mf">79.99m</span><span class="p">,</span><span class="w"> </span><span class="n">product</span><span class="p">.</span><span class="n">Price</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h4 id="step-3-make-tests-pass-green-phase">Step 3: Make Tests Pass (Green Phase)<a class="headerlink" href="#step-3-make-tests-pass-green-phase" title="Permanent link">&para;</a></h4>
+<p>Create the minimal implementation:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// ProductCatalog.Api/Models/Product.cs</span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">ProductCatalog.Api.Models</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Product</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Id</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Name</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span><span class="p">.</span><span class="n">Empty</span><span class="p">;</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="kt">decimal</span><span class="w"> </span><span class="n">Price</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Description</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span><span class="p">.</span><span class="n">Empty</span><span class="p">;</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="n">DateTime</span><span class="w"> </span><span class="n">CreatedAt</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DateTime</span><span class="p">.</span><span class="n">UtcNow</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CreateProductRequest</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Name</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span><span class="p">.</span><span class="n">Empty</span><span class="p">;</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="kt">decimal</span><span class="w"> </span><span class="n">Price</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Description</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span><span class="p">.</span><span class="n">Empty</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c1">// ProductCatalog.Api/Services/IProductService.cs</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">ProductCatalog.Api.Models</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">ProductCatalog.Api.Services</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">interface</span><span class="w"> </span><span class="n">IProductService</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">GetAllProductsAsync</span><span class="p">();</span>
+<span class="w">        </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">GetProductByIdAsync</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;</span><span class="w"> </span><span class="n">CreateProductAsync</span><span class="p">(</span><span class="n">CreateProductRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">UpdateProductAsync</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">CreateProductRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Task</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DeleteProductAsync</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c1">// ProductCatalog.Api/Controllers/ProductsController.cs</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Mvc</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">ProductCatalog.Api.Models</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">ProductCatalog.Api.Services</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">ProductCatalog.Api.Controllers</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="na">[ApiController]</span>
+<span class="w">    </span><span class="na">[Route(&quot;api/[controller]</span><span class="s">&quot;)]</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ProductsController</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">ControllerBase</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">IProductService</span><span class="w"> </span><span class="n">_productService</span><span class="p">;</span>
+<span class="w">        </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">ILogger</span><span class="o">&lt;</span><span class="n">ProductsController</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_logger</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="nf">ProductsController</span><span class="p">(</span>
+<span class="w">            </span><span class="n">IProductService</span><span class="w"> </span><span class="n">productService</span><span class="p">,</span>
+<span class="w">            </span><span class="n">ILogger</span><span class="o">&lt;</span><span class="n">ProductsController</span><span class="o">&gt;</span><span class="w"> </span><span class="n">logger</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_productService</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">productService</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_logger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">logger</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[HttpGet]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">ActionResult</span><span class="o">&lt;</span><span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">GetProducts</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="k">try</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="kt">var</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_productService</span><span class="p">.</span><span class="n">GetAllProductsAsync</span><span class="p">();</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nf">Ok</span><span class="p">(</span><span class="n">products</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">ex</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="n">_logger</span><span class="p">.</span><span class="n">LogError</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Error retrieving products&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nf">StatusCode</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Internal server error&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[HttpPost]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">ActionResult</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">CreateProduct</span><span class="p">(</span><span class="n">CreateProductRequest</span><span class="w"> </span><span class="n">request</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="k">try</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">ModelState</span><span class="p">.</span><span class="n">IsValid</span><span class="p">)</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="nf">BadRequest</span><span class="p">(</span><span class="n">ModelState</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+
+<span class="w">                </span><span class="kt">var</span><span class="w"> </span><span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_productService</span><span class="p">.</span><span class="n">CreateProductAsync</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nf">CreatedAtAction</span><span class="p">(</span><span class="k">nameof</span><span class="p">(</span><span class="n">GetProductById</span><span class="p">),</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">product</span><span class="p">.</span><span class="n">Id</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="n">product</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">ex</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="n">_logger</span><span class="p">.</span><span class="n">LogError</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Error creating product&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nf">StatusCode</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Internal server error&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[HttpGet(&quot;{id}&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">ActionResult</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">GetProductById</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="k">try</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="kt">var</span><span class="w"> </span><span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_productService</span><span class="p">.</span><span class="n">GetProductByIdAsync</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">product</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">null</span><span class="p">)</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="nf">NotFound</span><span class="p">();</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nf">Ok</span><span class="p">(</span><span class="n">product</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">ex</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="n">_logger</span><span class="p">.</span><span class="n">LogError</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Error retrieving product {ProductId}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nf">StatusCode</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Internal server error&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h4 id="step-4-refactor-and-improve">Step 4: Refactor and Improve<a class="headerlink" href="#step-4-refactor-and-improve" title="Permanent link">&para;</a></h4>
+<p>Add validation and improve error handling:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// ProductCatalog.Api/Models/CreateProductRequest.cs</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">System.ComponentModel.DataAnnotations</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">ProductCatalog.Api.Models</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CreateProductRequest</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="na">[Required(ErrorMessage = &quot;Product name is required&quot;)]</span>
+<span class="w">        </span><span class="na">[StringLength(100, ErrorMessage = &quot;Product name cannot exceed 100 characters&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Name</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span><span class="p">.</span><span class="n">Empty</span><span class="p">;</span>
+
+<span class="w">        </span><span class="na">[Required(ErrorMessage = &quot;Price is required&quot;)]</span>
+<span class="w">        </span><span class="na">[Range(0.01, double.MaxValue, ErrorMessage = &quot;Price must be greater than 0&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="kt">decimal</span><span class="w"> </span><span class="n">Price</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[StringLength(500, ErrorMessage = &quot;Description cannot exceed 500 characters&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Description</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span><span class="p">.</span><span class="n">Empty</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="example-2-bdd-with-specflow-net">Example 2: BDD with SpecFlow (.NET)<a class="headerlink" href="#example-2-bdd-with-specflow-net" title="Permanent link">&para;</a></h3>
+<p>Let's implement BDD scenarios for the product catalog.</p>
+<h4 id="step-1-set-up-specflow">Step 1: Set Up SpecFlow<a class="headerlink" href="#step-1-set-up-specflow" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>ProductCatalog.Tests
+dotnet<span class="w"> </span>add<span class="w"> </span>package<span class="w"> </span>SpecFlow.xUnit
+dotnet<span class="w"> </span>add<span class="w"> </span>package<span class="w"> </span>SpecFlow.Tools.MsBuild.Generation
+</code></pre></div>
+
+<h4 id="step-2-create-feature-file">Step 2: Create Feature File<a class="headerlink" href="#step-2-create-feature-file" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="c"># ProductCatalog.Tests/Features/ProductManagement.feature</span>
+<span class="k">Feature:</span><span class="nf"> Product Management</span>
+<span class="nf">    As a store manager</span>
+<span class="nf">    I want to manage products in the catalog</span>
+<span class="nf">    So that customers can browse and purchase items</span>
+
+<span class="k">Background:</span>
+<span class="k">    Given </span><span class="nf">the product catalog service is available</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">the database is clean</span>
+
+<span class="k">Scenario:</span><span class="nf"> Create a new product successfully</span>
+<span class="k">    Given </span><span class="nf">I have valid product details:</span>
+<span class="k">        |</span><span class="s"> Name</span><span class="k">     |</span><span class="s"> Price</span><span class="k"> |</span><span class="s"> Description</span><span class="k">        |</span>
+<span class="k">        |</span><span class="s"> Laptop</span><span class="k">   |</span><span class="s"> 999.99</span><span class="k">|</span><span class="s"> Gaming laptop</span><span class="k">      |</span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">I create the product</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">the product should be created successfully</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">the product should have an ID</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">the product should be retrievable by ID</span>
+
+<span class="k">Scenario:</span><span class="nf"> Retrieve all products</span>
+<span class="k">    Given </span><span class="nf">the following products exist:</span>
+<span class="k">        |</span><span class="s"> Name</span><span class="k">     |</span><span class="s"> Price</span><span class="k"> |</span><span class="s"> Description</span><span class="k">        |</span>
+<span class="k">        |</span><span class="s"> Laptop</span><span class="k">   |</span><span class="s"> 999.99</span><span class="k">|</span><span class="s"> Gaming laptop</span><span class="k">      |</span>
+<span class="k">        |</span><span class="s"> Mouse</span><span class="k">    |</span><span class="s"> 29.99</span><span class="k"> |</span><span class="s"> Wireless mouse</span><span class="k">     |</span>
+<span class="k">        |</span><span class="s"> Keyboard</span><span class="k"> |</span><span class="s"> 79.99</span><span class="k"> |</span><span class="s"> Mechanical keyboard</span><span class="k">|</span>
+<span class="s">    When I request all products</span>
+<span class="s">    Then I should receive 3 products</span>
+<span class="s">    And the products should be ordered by creation date</span>
+
+<span class="s">Scenario: Create product with invalid data fails</span>
+<span class="s">    Given I have invalid product details:</span>
+<span class="k">        |</span><span class="s"> Name</span><span class="k"> |</span><span class="s"> Price</span><span class="k"> |</span><span class="s"> Description</span><span class="k"> |</span>
+<span class="k">        |      |</span><span class="s"> -10</span><span class="k">   |</span><span class="s"> Too long description that exceeds the maximum allowed length of 500 characters...</span><span class="k"> |</span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">I attempt to create the product</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">the creation should fail with validation errors</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">I should receive appropriate error messages</span>
+
+<span class="k">Scenario:</span><span class="nf"> Update existing product</span>
+<span class="k">    Given </span><span class="nf">a product exists with:</span>
+<span class="k">        |</span><span class="s"> Name</span><span class="k">   |</span><span class="s"> Price</span><span class="k"> |</span><span class="s"> Description</span><span class="k">  |</span>
+<span class="k">        |</span><span class="s"> Laptop</span><span class="k"> |</span><span class="s"> 999.99</span><span class="k">|</span><span class="s"> Gaming laptop</span><span class="k">|</span>
+<span class="s">    When I update the product with:</span>
+<span class="k">        |</span><span class="s"> Name</span><span class="k">        |</span><span class="s"> Price</span><span class="k">  |</span><span class="s"> Description</span><span class="k">     |</span>
+<span class="k">        |</span><span class="s"> Gaming Laptop</span><span class="k">|</span><span class="s"> 1199.99</span><span class="k">|</span><span class="s"> High-end laptop</span><span class="k"> |</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">the product should be updated successfully</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">the updated product should be retrievable</span>
+</code></pre></div>
+
+<h4 id="step-3-implement-step-definitions">Step 3: Implement Step Definitions<a class="headerlink" href="#step-3-implement-step-definitions" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1">// ProductCatalog.Tests/StepDefinitions/ProductManagementSteps.cs</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">TechTalk.SpecFlow</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">TechTalk.SpecFlow.Assist</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Xunit</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Mvc.Testing</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.Extensions.DependencyInjection</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">ProductCatalog.Api</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">ProductCatalog.Api.Models</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">System.Net.Http.Json</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">System.Net</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">ProductCatalog.Tests.StepDefinitions</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="na">[Binding]</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ProductManagementSteps</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IClassFixture</span><span class="o">&lt;</span><span class="n">WebApplicationFactory</span><span class="o">&lt;</span><span class="n">Program</span><span class="o">&gt;&gt;</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">WebApplicationFactory</span><span class="o">&lt;</span><span class="n">Program</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_factory</span><span class="p">;</span>
+<span class="w">        </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">HttpClient</span><span class="w"> </span><span class="n">_client</span><span class="p">;</span>
+<span class="w">        </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">ScenarioContext</span><span class="w"> </span><span class="n">_scenarioContext</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">private</span><span class="w"> </span><span class="n">CreateProductRequest</span><span class="o">?</span><span class="w"> </span><span class="n">_productRequest</span><span class="p">;</span>
+<span class="w">        </span><span class="k">private</span><span class="w"> </span><span class="n">HttpResponseMessage</span><span class="o">?</span><span class="w"> </span><span class="n">_response</span><span class="p">;</span>
+<span class="w">        </span><span class="k">private</span><span class="w"> </span><span class="n">Product</span><span class="o">?</span><span class="w"> </span><span class="n">_createdProduct</span><span class="p">;</span>
+<span class="w">        </span><span class="k">private</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;?</span><span class="w"> </span><span class="n">_retrievedProducts</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="nf">ProductManagementSteps</span><span class="p">(</span>
+<span class="w">            </span><span class="n">WebApplicationFactory</span><span class="o">&lt;</span><span class="n">Program</span><span class="o">&gt;</span><span class="w"> </span><span class="n">factory</span><span class="p">,</span><span class="w"> </span>
+<span class="w">            </span><span class="n">ScenarioContext</span><span class="w"> </span><span class="n">scenarioContext</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_factory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">factory</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_scenarioContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scenarioContext</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_factory</span><span class="p">.</span><span class="n">CreateClient</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Given(@&quot;the product catalog service is available&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">GivenTheProductCatalogServiceIsAvailable</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// Verify the service is running</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_client</span><span class="p">.</span><span class="n">GetAsync</span><span class="p">(</span><span class="s">&quot;/health&quot;</span><span class="p">).</span><span class="n">Result</span><span class="p">;</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">True</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">IsSuccessStatusCode</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Given(@&quot;the database is clean&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">GivenTheDatabaseIsClean</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// Clean database for test isolation</span>
+<span class="w">            </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_factory</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">CreateScope</span><span class="p">();</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scope</span><span class="p">.</span><span class="n">ServiceProvider</span><span class="p">.</span><span class="n">GetRequiredService</span><span class="o">&lt;</span><span class="n">ProductDbContext</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">            </span><span class="n">context</span><span class="p">.</span><span class="n">Products</span><span class="p">.</span><span class="n">RemoveRange</span><span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">Products</span><span class="p">);</span>
+<span class="w">            </span><span class="k">await</span><span class="w"> </span><span class="n">context</span><span class="p">.</span><span class="n">SaveChangesAsync</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Given(@&quot;I have valid product details:&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">GivenIHaveValidProductDetails</span><span class="p">(</span><span class="n">Table</span><span class="w"> </span><span class="n">table</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_productRequest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">table</span><span class="p">.</span><span class="n">CreateInstance</span><span class="o">&lt;</span><span class="n">CreateProductRequest</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Given(@&quot;I have invalid product details:&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">GivenIHaveInvalidProductDetails</span><span class="p">(</span><span class="n">Table</span><span class="w"> </span><span class="n">table</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_productRequest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">table</span><span class="p">.</span><span class="n">CreateInstance</span><span class="o">&lt;</span><span class="n">CreateProductRequest</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Given(@&quot;the following products exist:&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">GivenTheFollowingProductsExist</span><span class="p">(</span><span class="n">Table</span><span class="w"> </span><span class="n">table</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">table</span><span class="p">.</span><span class="n">CreateSet</span><span class="o">&lt;</span><span class="n">CreateProductRequest</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">            </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">product</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">products</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="kt">var</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_client</span><span class="p">.</span><span class="n">PostAsJsonAsync</span><span class="p">(</span><span class="s">&quot;/api/products&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">product</span><span class="p">);</span>
+<span class="w">                </span><span class="n">Assert</span><span class="p">.</span><span class="n">True</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">IsSuccessStatusCode</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Given(@&quot;a product exists with:&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">GivenAProductExistsWith</span><span class="p">(</span><span class="n">Table</span><span class="w"> </span><span class="n">table</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_productRequest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">table</span><span class="p">.</span><span class="n">CreateInstance</span><span class="o">&lt;</span><span class="n">CreateProductRequest</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">            </span><span class="n">_response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_client</span><span class="p">.</span><span class="n">PostAsJsonAsync</span><span class="p">(</span><span class="s">&quot;/api/products&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">_productRequest</span><span class="p">);</span>
+<span class="w">            </span><span class="n">_createdProduct</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_response</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadFromJsonAsync</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">            </span><span class="n">_scenarioContext</span><span class="p">[</span><span class="s">&quot;ExistingProduct&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_createdProduct</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[When(@&quot;I create the product&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">WhenICreateTheProduct</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_client</span><span class="p">.</span><span class="n">PostAsJsonAsync</span><span class="p">(</span><span class="s">&quot;/api/products&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">_productRequest</span><span class="p">);</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_response</span><span class="p">.</span><span class="n">IsSuccessStatusCode</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="n">_createdProduct</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_response</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadFromJsonAsync</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[When(@&quot;I attempt to create the product&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">WhenIAttemptToCreateTheProduct</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_client</span><span class="p">.</span><span class="n">PostAsJsonAsync</span><span class="p">(</span><span class="s">&quot;/api/products&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">_productRequest</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[When(@&quot;I request all products&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">WhenIRequestAllProducts</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">_response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_client</span><span class="p">.</span><span class="n">GetAsync</span><span class="p">(</span><span class="s">&quot;/api/products&quot;</span><span class="p">);</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_response</span><span class="p">.</span><span class="n">IsSuccessStatusCode</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="n">_retrievedProducts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_response</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadFromJsonAsync</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;&gt;</span><span class="p">();</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[When(@&quot;I update the product with:&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">WhenIUpdateTheProductWith</span><span class="p">(</span><span class="n">Table</span><span class="w"> </span><span class="n">table</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">existingProduct</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_scenarioContext</span><span class="p">[</span><span class="s">&quot;ExistingProduct&quot;</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Product</span><span class="p">;</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">updateRequest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">table</span><span class="p">.</span><span class="n">CreateInstance</span><span class="o">&lt;</span><span class="n">CreateProductRequest</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">            </span><span class="n">_response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_client</span><span class="p">.</span><span class="n">PutAsJsonAsync</span><span class="p">(</span><span class="s">$&quot;/api/products/{existingProduct!.Id}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">updateRequest</span><span class="p">);</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_response</span><span class="p">.</span><span class="n">IsSuccessStatusCode</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="n">_createdProduct</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_response</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadFromJsonAsync</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Then(@&quot;the product should be created successfully&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">ThenTheProductShouldBeCreatedSuccessfully</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">Created</span><span class="p">,</span><span class="w"> </span><span class="n">_response</span><span class="o">!</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">NotNull</span><span class="p">(</span><span class="n">_createdProduct</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Then(@&quot;the product should have an ID&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">ThenTheProductShouldHaveAnId</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">True</span><span class="p">(</span><span class="n">_createdProduct</span><span class="o">!</span><span class="p">.</span><span class="n">Id</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Then(@&quot;the product should be retrievable by ID&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">ThenTheProductShouldBeRetrievableById</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_client</span><span class="p">.</span><span class="n">GetAsync</span><span class="p">(</span><span class="s">$&quot;/api/products/{_createdProduct!.Id}&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">True</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">IsSuccessStatusCode</span><span class="p">);</span>
+
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">retrievedProduct</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">response</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadFromJsonAsync</span><span class="o">&lt;</span><span class="n">Product</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">_createdProduct</span><span class="p">.</span><span class="n">Name</span><span class="p">,</span><span class="w"> </span><span class="n">retrievedProduct</span><span class="o">!</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">_createdProduct</span><span class="p">.</span><span class="n">Price</span><span class="p">,</span><span class="w"> </span><span class="n">retrievedProduct</span><span class="p">.</span><span class="n">Price</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Then(@&quot;I should receive (.*) products&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">ThenIShouldReceiveProducts</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">expectedCount</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">OK</span><span class="p">,</span><span class="w"> </span><span class="n">_response</span><span class="o">!</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">NotNull</span><span class="p">(</span><span class="n">_retrievedProducts</span><span class="p">);</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">expectedCount</span><span class="p">,</span><span class="w"> </span><span class="n">_retrievedProducts</span><span class="p">.</span><span class="n">Count</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Then(@&quot;the products should be ordered by creation date&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">ThenTheProductsShouldBeOrderedByCreationDate</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">_retrievedProducts</span><span class="o">!</span><span class="p">.</span><span class="n">Count</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Assert</span><span class="p">.</span><span class="n">True</span><span class="p">(</span><span class="n">_retrievedProducts</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="n">CreatedAt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">_retrievedProducts</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">CreatedAt</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Then(@&quot;the creation should fail with validation errors&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">ThenTheCreationShouldFailWithValidationErrors</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">BadRequest</span><span class="p">,</span><span class="w"> </span><span class="n">_response</span><span class="o">!</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Then(@&quot;I should receive appropriate error messages&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">ThenIShouldReceiveAppropriateErrorMessages</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">errorContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_response</span><span class="o">!</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadAsStringAsync</span><span class="p">();</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="s">&quot;validation&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">errorContent</span><span class="p">.</span><span class="n">ToLower</span><span class="p">());</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Then(@&quot;the product should be updated successfully&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">ThenTheProductShouldBeUpdatedSuccessfully</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">OK</span><span class="p">,</span><span class="w"> </span><span class="n">_response</span><span class="o">!</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">NotNull</span><span class="p">(</span><span class="n">_createdProduct</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="na">[Then(@&quot;the updated product should be retrievable&quot;)]</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">ThenTheUpdatedProductShouldBeRetrievable</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_client</span><span class="p">.</span><span class="n">GetAsync</span><span class="p">(</span><span class="s">$&quot;/api/products/{_createdProduct!.Id}&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">Assert</span><span class="p">.</span><span class="n">True</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">IsSuccessStatusCode</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="example-3-tdd-with-react-native">Example 3: TDD with React Native<a class="headerlink" href="#example-3-tdd-with-react-native" title="Permanent link">&para;</a></h3>
+<p>Let's implement TDD for a React Native product list component.</p>
+<h4 id="step-1-set-up-testing-environment">Step 1: Set Up Testing Environment<a class="headerlink" href="#step-1-set-up-testing-environment" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code>npx<span class="w"> </span>react-native<span class="w"> </span>init<span class="w"> </span>ProductCatalogApp<span class="w"> </span>--template<span class="w"> </span>react-native-template-typescript
+<span class="nb">cd</span><span class="w"> </span>ProductCatalogApp
+npm<span class="w"> </span>install<span class="w"> </span>--save-dev<span class="w"> </span>@testing-library/react-native<span class="w"> </span>@testing-library/jest-native
+</code></pre></div>
+
+<h4 id="step-2-write-failing-test">Step 2: Write Failing Test<a class="headerlink" href="#step-2-write-failing-test" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1">// __tests__/components/ProductList.test.tsx</span>
+<span class="k">import</span><span class="w"> </span><span class="nx">React</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">render</span><span class="p">,</span><span class="w"> </span><span class="nx">screen</span><span class="p">,</span><span class="w"> </span><span class="nx">waitFor</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@testing-library/react-native&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">ProductList</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;../../src/components/ProductList&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Product</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;../../src/types/Product&#39;</span><span class="p">;</span>
+
+<span class="c1">// Mock the fetch function</span>
+<span class="nb">global</span><span class="p">.</span><span class="nx">fetch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">jest</span><span class="p">.</span><span class="nx">fn</span><span class="p">();</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;ProductList&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">beforeEach</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">jest</span><span class="p">.</span><span class="nx">clearAllMocks</span><span class="p">();</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;displays loading indicator while fetching products&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Arrange</span>
+<span class="w">    </span><span class="p">(</span><span class="nx">fetch</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">jest</span><span class="p">.</span><span class="nx">Mock</span><span class="p">).</span><span class="nx">mockResolvedValueOnce</span><span class="p">({</span>
+<span class="w">      </span><span class="nx">ok</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">json</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">([]),</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// Act</span>
+<span class="w">    </span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">ProductList</span><span class="w"> </span><span class="o">/&gt;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Assert</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">screen</span><span class="p">.</span><span class="nx">getByTestId</span><span class="p">(</span><span class="s1">&#39;loading-indicator&#39;</span><span class="p">)).</span><span class="nx">toBeTruthy</span><span class="p">();</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;displays products when fetch is successful&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Arrange</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">mockProducts</span><span class="o">:</span><span class="w"> </span><span class="kt">Product</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Laptop&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">price</span><span class="o">:</span><span class="w"> </span><span class="kt">999.99</span><span class="p">,</span><span class="w"> </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Gaming laptop&#39;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">2</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Mouse&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">price</span><span class="o">:</span><span class="w"> </span><span class="kt">29.99</span><span class="p">,</span><span class="w"> </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Wireless mouse&#39;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">];</span>
+
+<span class="w">    </span><span class="p">(</span><span class="nx">fetch</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">jest</span><span class="p">.</span><span class="nx">Mock</span><span class="p">).</span><span class="nx">mockResolvedValueOnce</span><span class="p">({</span>
+<span class="w">      </span><span class="nx">ok</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">json</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">mockProducts</span><span class="p">),</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// Act</span>
+<span class="w">    </span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">ProductList</span><span class="w"> </span><span class="o">/&gt;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Assert</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">waitFor</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">screen</span><span class="p">.</span><span class="nx">getByText</span><span class="p">(</span><span class="s1">&#39;Laptop&#39;</span><span class="p">)).</span><span class="nx">toBeTruthy</span><span class="p">();</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">screen</span><span class="p">.</span><span class="nx">getByText</span><span class="p">(</span><span class="s1">&#39;$999.99&#39;</span><span class="p">)).</span><span class="nx">toBeTruthy</span><span class="p">();</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">screen</span><span class="p">.</span><span class="nx">getByText</span><span class="p">(</span><span class="s1">&#39;Mouse&#39;</span><span class="p">)).</span><span class="nx">toBeTruthy</span><span class="p">();</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">screen</span><span class="p">.</span><span class="nx">getByText</span><span class="p">(</span><span class="s1">&#39;$29.99&#39;</span><span class="p">)).</span><span class="nx">toBeTruthy</span><span class="p">();</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;displays error message when fetch fails&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Arrange</span>
+<span class="w">    </span><span class="p">(</span><span class="nx">fetch</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">jest</span><span class="p">.</span><span class="nx">Mock</span><span class="p">).</span><span class="nx">mockRejectedValueOnce</span><span class="p">(</span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s1">&#39;Network error&#39;</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// Act</span>
+<span class="w">    </span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">ProductList</span><span class="w"> </span><span class="o">/&gt;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Assert</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">waitFor</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">screen</span><span class="p">.</span><span class="nx">getByText</span><span class="p">(</span><span class="s1">&#39;Error loading products&#39;</span><span class="p">)).</span><span class="nx">toBeTruthy</span><span class="p">();</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;calls fetch with correct URL&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Arrange &amp; Act</span>
+<span class="w">    </span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">ProductList</span><span class="w"> </span><span class="o">/&gt;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Assert</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fetch</span><span class="p">).</span><span class="nx">toHaveBeenCalledWith</span><span class="p">(</span><span class="s1">&#39;https://api.example.com/products&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<h4 id="step-3-implement-component-green-phase">Step 3: Implement Component (Green Phase)<a class="headerlink" href="#step-3-implement-component-green-phase" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1">// src/types/Product.ts</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">Product</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">price</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c1">// src/components/ProductList.tsx</span>
+<span class="k">import</span><span class="w"> </span><span class="nx">React</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useEffect</span><span class="p">,</span><span class="w"> </span><span class="nx">useState</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">View</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">Text</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">FlatList</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">ActivityIndicator</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">StyleSheet</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">Alert</span><span class="p">,</span>
+<span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react-native&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Product</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;../types/Product&#39;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">ProductList</span><span class="o">:</span><span class="w"> </span><span class="kt">React.FC</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">products</span><span class="p">,</span><span class="w"> </span><span class="nx">setProducts</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="o">&lt;</span><span class="nx">Product</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">([]);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">loading</span><span class="p">,</span><span class="w"> </span><span class="nx">setLoading</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">error</span><span class="p">,</span><span class="w"> </span><span class="nx">setError</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="o">&lt;</span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="o">&gt;</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+
+<span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">fetchProducts</span><span class="p">();</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[]);</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">fetchProducts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">setLoading</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<span class="w">      </span><span class="nx">setError</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;https://api.example.com/products&#39;</span><span class="p">);</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">response</span><span class="p">.</span><span class="nx">ok</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="sb">`HTTP error! status: </span><span class="si">${</span><span class="nx">response</span><span class="p">.</span><span class="nx">status</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<span class="w">      </span><span class="nx">setProducts</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">err</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">errorMessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="ow">instanceof</span><span class="w"> </span><span class="ne">Error</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Unknown error&#39;</span><span class="p">;</span>
+<span class="w">      </span><span class="nx">setError</span><span class="p">(</span><span class="s1">&#39;Error loading products&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Error fetching products:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">errorMessage</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">setLoading</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">};</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">renderProduct</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">({</span><span class="w"> </span><span class="nx">item</span><span class="w"> </span><span class="p">}</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">item</span><span class="o">:</span><span class="w"> </span><span class="kt">Product</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="nx">View</span><span class="w"> </span><span class="nx">style</span><span class="o">=</span><span class="p">{</span><span class="nx">styles</span><span class="p">.</span><span class="nx">productItem</span><span class="p">}</span><span class="o">&gt;</span>
+<span class="w">      </span><span class="o">&lt;</span><span class="nx">Text</span><span class="w"> </span><span class="nx">style</span><span class="o">=</span><span class="p">{</span><span class="nx">styles</span><span class="p">.</span><span class="nx">productName</span><span class="p">}</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">item</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/Text&gt;</span>
+<span class="w">      </span><span class="o">&lt;</span><span class="nx">Text</span><span class="w"> </span><span class="nx">style</span><span class="o">=</span><span class="p">{</span><span class="nx">styles</span><span class="p">.</span><span class="nx">productPrice</span><span class="p">}</span><span class="o">&gt;</span><span class="nx">$</span><span class="p">{</span><span class="nx">item</span><span class="p">.</span><span class="nx">price</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mf">2</span><span class="p">)}</span><span class="o">&lt;</span><span class="err">/Text&gt;</span>
+<span class="w">      </span><span class="o">&lt;</span><span class="nx">Text</span><span class="w"> </span><span class="nx">style</span><span class="o">=</span><span class="p">{</span><span class="nx">styles</span><span class="p">.</span><span class="nx">productDescription</span><span class="p">}</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">item</span><span class="p">.</span><span class="nx">description</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/Text&gt;</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="err">/View&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">loading</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">      </span><span class="o">&lt;</span><span class="nx">View</span><span class="w"> </span><span class="nx">style</span><span class="o">=</span><span class="p">{</span><span class="nx">styles</span><span class="p">.</span><span class="nx">centerContainer</span><span class="p">}</span><span class="o">&gt;</span>
+<span class="w">        </span><span class="o">&lt;</span><span class="nx">ActivityIndicator</span><span class="w"> </span>
+<span class="w">          </span><span class="nx">testID</span><span class="o">=</span><span class="s2">&quot;loading-indicator&quot;</span><span class="w"> </span>
+<span class="w">          </span><span class="nx">size</span><span class="o">=</span><span class="s2">&quot;large&quot;</span><span class="w"> </span>
+<span class="w">          </span><span class="nx">color</span><span class="o">=</span><span class="s2">&quot;#0000ff&quot;</span><span class="w"> </span>
+<span class="w">        </span><span class="o">/&gt;</span>
+<span class="w">        </span><span class="o">&lt;</span><span class="nx">Text</span><span class="o">&gt;</span><span class="nx">Loading</span><span class="w"> </span><span class="nx">products</span><span class="p">...</span><span class="o">&lt;</span><span class="err">/Text&gt;</span>
+<span class="w">      </span><span class="o">&lt;</span><span class="err">/View&gt;</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">      </span><span class="o">&lt;</span><span class="nx">View</span><span class="w"> </span><span class="nx">style</span><span class="o">=</span><span class="p">{</span><span class="nx">styles</span><span class="p">.</span><span class="nx">centerContainer</span><span class="p">}</span><span class="o">&gt;</span>
+<span class="w">        </span><span class="o">&lt;</span><span class="nx">Text</span><span class="w"> </span><span class="nx">style</span><span class="o">=</span><span class="p">{</span><span class="nx">styles</span><span class="p">.</span><span class="nx">errorText</span><span class="p">}</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">error</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/Text&gt;</span>
+<span class="w">      </span><span class="o">&lt;</span><span class="err">/View&gt;</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="nx">FlatList</span>
+<span class="w">      </span><span class="nx">data</span><span class="o">=</span><span class="p">{</span><span class="nx">products</span><span class="p">}</span>
+<span class="w">      </span><span class="nx">renderItem</span><span class="o">=</span><span class="p">{</span><span class="nx">renderProduct</span><span class="p">}</span>
+<span class="w">      </span><span class="nx">keyExtractor</span><span class="o">=</span><span class="p">{(</span><span class="nx">item</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">toString</span><span class="p">()}</span>
+<span class="w">      </span><span class="nx">style</span><span class="o">=</span><span class="p">{</span><span class="nx">styles</span><span class="p">.</span><span class="nx">container</span><span class="p">}</span>
+<span class="w">      </span><span class="nx">testID</span><span class="o">=</span><span class="s2">&quot;product-list&quot;</span>
+<span class="w">    </span><span class="o">/&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">styles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">StyleSheet</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+<span class="w">  </span><span class="nx">container</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">flex</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">backgroundColor</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;#f5f5f5&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nx">centerContainer</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">flex</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">justifyContent</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">alignItems</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">padding</span><span class="o">:</span><span class="w"> </span><span class="kt">20</span><span class="p">,</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nx">productItem</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">backgroundColor</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;white&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">padding</span><span class="o">:</span><span class="w"> </span><span class="kt">16</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">marginHorizontal</span><span class="o">:</span><span class="w"> </span><span class="kt">16</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">marginVertical</span><span class="o">:</span><span class="w"> </span><span class="kt">8</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">borderRadius</span><span class="o">:</span><span class="w"> </span><span class="kt">8</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">shadowColor</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;#000&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">shadowOffset</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">width</span><span class="o">:</span><span class="w"> </span><span class="kt">0</span><span class="p">,</span><span class="w"> </span><span class="nx">height</span><span class="o">:</span><span class="w"> </span><span class="kt">2</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nx">shadowOpacity</span><span class="o">:</span><span class="w"> </span><span class="kt">0.1</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">shadowRadius</span><span class="o">:</span><span class="w"> </span><span class="kt">4</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">elevation</span><span class="o">:</span><span class="w"> </span><span class="kt">3</span><span class="p">,</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nx">productName</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">fontSize</span><span class="o">:</span><span class="w"> </span><span class="kt">18</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">fontWeight</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;bold&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">marginBottom</span><span class="o">:</span><span class="w"> </span><span class="kt">4</span><span class="p">,</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nx">productPrice</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">fontSize</span><span class="o">:</span><span class="w"> </span><span class="kt">16</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">color</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;#007AFF&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">fontWeight</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;600&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">marginBottom</span><span class="o">:</span><span class="w"> </span><span class="kt">4</span><span class="p">,</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nx">productDescription</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">fontSize</span><span class="o">:</span><span class="w"> </span><span class="kt">14</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">color</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;#666&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nx">errorText</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">color</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;red&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">fontSize</span><span class="o">:</span><span class="w"> </span><span class="kt">16</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">textAlign</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<h2 id="common-pitfalls">Common Pitfalls<a class="headerlink" href="#common-pitfalls" title="Permanent link">&para;</a></h2>
+<h3 id="1-writing-tests-after-implementation">1. Writing Tests After Implementation<a class="headerlink" href="#1-writing-tests-after-implementation" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: Writing tests after code is implemented reduces their effectiveness and may lead to tests that confirm existing bugs.</p>
+<p><strong>Solution</strong>: Always write tests first (Red phase) to ensure tests actually validate the intended behavior:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// BAD: Testing existing implementation</span>
+<span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should do what the current code does&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">existingFunction</span><span class="p">();</span>
+<span class="w">  </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="nx">whatever_it_currently_returns</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// GOOD: Testing intended behavior</span>
+<span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should calculate total price including tax&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Order</span><span class="p">([</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nx">price</span><span class="o">:</span><span class="w"> </span><span class="kt">100</span><span class="p">,</span><span class="w"> </span><span class="nx">quantity</span><span class="o">:</span><span class="w"> </span><span class="kt">2</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nx">price</span><span class="o">:</span><span class="w"> </span><span class="kt">50</span><span class="p">,</span><span class="w"> </span><span class="nx">quantity</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]);</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">order</span><span class="p">.</span><span class="nx">calculateTotalWithTax</span><span class="p">(</span><span class="mf">0.1</span><span class="p">);</span><span class="w"> </span><span class="c1">// 10% tax</span>
+
+<span class="w">  </span><span class="nx">expect</span><span class="p">(</span><span class="nx">total</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mf">275</span><span class="p">);</span><span class="w"> </span><span class="c1">// (200 + 50) * 1.1</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<h3 id="2-over-mocking-in-tests">2. Over-Mocking in Tests<a class="headerlink" href="#2-over-mocking-in-tests" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: Excessive mocking can make tests brittle and reduce confidence in the system.</p>
+<p><strong>Solution</strong>: Use mocks judiciously and prefer integration tests where appropriate:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// BAD: Over-mocking</span>
+<span class="na">[Fact]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">CalculateTotal_ShouldReturnCorrectValue</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">mockItem1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Mock</span><span class="o">&lt;</span><span class="n">IOrderItem</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">mockItem1</span><span class="p">.</span><span class="n">Setup</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">GetPrice</span><span class="p">()).</span><span class="n">Returns</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">mockItem2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Mock</span><span class="o">&lt;</span><span class="n">IOrderItem</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">mockItem2</span><span class="p">.</span><span class="n">Setup</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">GetPrice</span><span class="p">()).</span><span class="n">Returns</span><span class="p">(</span><span class="mi">20</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Order</span><span class="p">();</span>
+<span class="w">    </span><span class="n">order</span><span class="p">.</span><span class="n">AddItem</span><span class="p">(</span><span class="n">mockItem1</span><span class="p">.</span><span class="n">Object</span><span class="p">);</span>
+<span class="w">    </span><span class="n">order</span><span class="p">.</span><span class="n">AddItem</span><span class="p">(</span><span class="n">mockItem2</span><span class="p">.</span><span class="n">Object</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p">.</span><span class="n">CalculateTotal</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="c1">// GOOD: Testing with real objects</span>
+<span class="na">[Fact]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">CalculateTotal_WithRealItems_ReturnsCorrectValue</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Order</span><span class="p">();</span>
+<span class="w">    </span><span class="n">order</span><span class="p">.</span><span class="n">AddItem</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">OrderItem</span><span class="p">(</span><span class="s">&quot;Product1&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">));</span>
+<span class="w">    </span><span class="n">order</span><span class="p">.</span><span class="n">AddItem</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">OrderItem</span><span class="p">(</span><span class="s">&quot;Product2&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p">.</span><span class="n">CalculateTotal</span><span class="p">());</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="3-poor-bdd-scenario-writing">3. Poor BDD Scenario Writing<a class="headerlink" href="#3-poor-bdd-scenario-writing" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: BDD scenarios that are too technical or don't reflect real user behavior.</p>
+<p><strong>Solution</strong>: Write scenarios from the user's perspective using business language:</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># BAD: Too technical</span>
+<span class="k">Scenario:</span><span class="nf"> POST request to /api/products returns 201</span>
+<span class="k">    Given </span><span class="nf">I send a POST request to /api/products</span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">the request contains valid JSON</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">the response should be </span><span class="s">201</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">the Location header should be set</span>
+
+<span class="c"># GOOD: Business-focused</span>
+<span class="k">Scenario:</span><span class="nf"> Store manager adds new product to catalog</span>
+<span class="k">    Given </span><span class="nf">I am logged in as a store manager</span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">I add a new product &quot;</span><span class="s">Gaming Laptop</span><span class="nf">&quot; priced at $</span><span class="s">1299.99</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">the product should appear in the catalog</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">customers should be able to find it by searching</span>
+</code></pre></div>
+
+<h3 id="4-ignoring-test-performance">4. Ignoring Test Performance<a class="headerlink" href="#4-ignoring-test-performance" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: Slow tests discourage running them frequently, reducing their value.</p>
+<p><strong>Solution</strong>: Use appropriate test isolation and consider test containers for integration tests:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># docker-compose.test.yml for fast test database</span>
+<span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;3.8&#39;</span>
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">test-db</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.access.redhat.com/rhel8/postgresql-13</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">POSTGRESQL_DATABASE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testdb</span>
+<span class="w">      </span><span class="nt">POSTGRESQL_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testuser</span>
+<span class="w">      </span><span class="nt">POSTGRESQL_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testpass</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;5433:5432&quot;</span>
+<span class="w">    </span><span class="nt">tmpfs</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/lib/postgresql/data</span><span class="w">  </span><span class="c1"># In-memory for speed</span>
+</code></pre></div>
+
+<h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
+<h3 id="tdd-best-practices">TDD Best Practices<a class="headerlink" href="#tdd-best-practices" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Start with the simplest test</strong>: Begin with basic scenarios before edge cases</li>
+<li><strong>Write minimal code to pass</strong>: Don't over-engineer in the Green phase</li>
+<li><strong>Refactor regularly</strong>: Improve code quality after tests pass</li>
+<li><strong>Test behavior, not implementation</strong>: Focus on what the code should do, not how</li>
+<li><strong>Use descriptive test names</strong>: Make test intent clear from the name</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Good test naming conventions</span>
+<span class="na">[Fact]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">CalculateDiscount_WithValidCustomerAndAmount_ReturnsCorrectDiscount</span><span class="p">()</span>
+
+<span class="na">[Fact]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">CalculateDiscount_WithInvalidAmount_ThrowsArgumentException</span><span class="p">()</span>
+
+<span class="na">[Fact]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">CalculateDiscount_WithNullCustomer_ThrowsArgumentNullException</span><span class="p">()</span>
+</code></pre></div>
+
+<h3 id="bdd-best-practices">BDD Best Practices<a class="headerlink" href="#bdd-best-practices" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Collaborate on scenarios</strong>: Include stakeholders in scenario writing</li>
+<li><strong>Use ubiquitous language</strong>: Use domain terms consistently</li>
+<li><strong>Keep scenarios focused</strong>: One behavior per scenario</li>
+<li><strong>Use data tables effectively</strong>: For parameterized scenarios</li>
+<li><strong>Maintain living documentation</strong>: Keep scenarios updated with code changes</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="c"># Example of focused, business-oriented scenario</span>
+<span class="k">Scenario:</span><span class="nf"> Customer receives loyalty discount</span>
+<span class="k">    Given </span><span class="nf">I am a loyalty customer with &quot;</span><span class="s">Gold</span><span class="nf">&quot; status</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">I have an order worth $</span><span class="s">200</span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">I apply my loyalty discount</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">I should receive a </span><span class="s">15</span><span class="nf">% discount</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">my final total should be $</span><span class="s">170</span>
+</code></pre></div>
+
+<h3 id="integration-with-containers">Integration with Containers<a class="headerlink" href="#integration-with-containers" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Use Testcontainers</strong>: For realistic integration tests</li>
+<li><strong>Isolate test databases</strong>: Each test run should use clean data</li>
+<li><strong>Container health checks</strong>: Ensure services are ready before testing</li>
+<li><strong>Resource cleanup</strong>: Properly dispose of containers after tests</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Example using Testcontainers with PostgreSQL</span>
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ProductServiceIntegrationTests</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IAsyncLifetime</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">PostgreSqlContainer</span><span class="w"> </span><span class="n">_postgres</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PostgreSqlBuilder</span><span class="p">()</span>
+<span class="w">        </span><span class="p">.</span><span class="n">WithImage</span><span class="p">(</span><span class="s">&quot;registry.access.redhat.com/rhel8/postgresql-13&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="n">WithDatabase</span><span class="p">(</span><span class="s">&quot;testdb&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="n">WithUsername</span><span class="p">(</span><span class="s">&quot;testuser&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="n">WithPassword</span><span class="p">(</span><span class="s">&quot;testpass&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="n">Build</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">InitializeAsync</span><span class="p">()</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">StartAsync</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">DisposeAsync</span><span class="p">()</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">DisposeAsync</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="tools-and-resources">Tools and Resources<a class="headerlink" href="#tools-and-resources" title="Permanent link">&para;</a></h2>
+<h3 id="net-testing-tools">.NET Testing Tools<a class="headerlink" href="#net-testing-tools" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>xUnit</strong>: Modern testing framework for .NET</li>
+<li><strong>SpecFlow</strong>: BDD framework for .NET</li>
+<li><strong>Moq</strong>: Mocking framework</li>
+<li><strong>Testcontainers</strong>: Integration testing with containers</li>
+<li><strong>Coverlet</strong>: Code coverage analysis</li>
+<li><strong>ReportGenerator</strong>: Coverage report generation</li>
+</ul>
+<h3 id="react-native-testing-tools">React Native Testing Tools<a class="headerlink" href="#react-native-testing-tools" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Jest</strong>: JavaScript testing framework</li>
+<li><strong>React Native Testing Library</strong>: Component testing utilities</li>
+<li><strong>Cucumber.js</strong>: BDD framework for JavaScript</li>
+<li><strong>MSW</strong>: API mocking for testing</li>
+<li><strong>Detox</strong>: End-to-end testing for React Native</li>
+</ul>
+<h3 id="container-testing-setup">Container Testing Setup<a class="headerlink" href="#container-testing-setup" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c"># Containerfile.test - Testing environment with UBI</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">registry.access.redhat.com/ubi8/dotnet-60</span>
+
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+
+<span class="c"># Install development tools</span>
+<span class="k">RUN</span><span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>git
+
+<span class="c"># Copy test projects</span>
+<span class="k">COPY</span><span class="w"> </span>*.Tests/*.csproj<span class="w"> </span>./Tests/
+<span class="k">COPY</span><span class="w"> </span>*.Api/*.csproj<span class="w"> </span>./Api/
+
+<span class="c"># Restore dependencies</span>
+<span class="k">RUN</span><span class="w"> </span>dotnet<span class="w"> </span>restore<span class="w"> </span>Tests/<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>dotnet<span class="w"> </span>restore<span class="w"> </span>Api/
+
+<span class="c"># Copy source code</span>
+<span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>.
+
+<span class="c"># Run tests</span>
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;dotnet&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Tests/&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;--logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;trx&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;--results-directory&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;/app/TestResults&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<h3 id="useful-resources">Useful Resources<a class="headerlink" href="#useful-resources" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://xunit.net/">xUnit Documentation</a></li>
+<li><a href="https://specflow.org/learn/">SpecFlow Documentation</a></li>
+<li><a href="https://callstack.github.io/react-native-testing-library/">React Native Testing Library</a></li>
+<li><a href="https://www.testcontainers.org/">Testcontainers Documentation</a></li>
+<li><a href="https://cucumber.io/docs/bdd/">BDD Best Practices</a></li>
+</ul>
+<h2 id="hands-on-exercise">Hands-on Exercise<a class="headerlink" href="#hands-on-exercise" title="Permanent link">&para;</a></h2>
+<h3 id="exercise-complete-e-commerce-testing-suite">Exercise: Complete E-commerce Testing Suite<a class="headerlink" href="#exercise-complete-e-commerce-testing-suite" title="Permanent link">&para;</a></h3>
+<p>Implement a comprehensive testing suite for an e-commerce application using both TDD and BDD approaches.</p>
+<p><strong>Requirements:</strong></p>
+<ol>
+<li><strong>Backend (.NET API):</strong></li>
+<li>Product catalog management</li>
+<li>Shopping cart functionality</li>
+<li>Order processing</li>
+<li>
+<p>User authentication</p>
+</li>
+<li>
+<p><strong>Frontend (React Native):</strong></p>
+</li>
+<li>Product browsing</li>
+<li>Cart management</li>
+<li>Checkout process</li>
+<li>
+<p>User profile</p>
+</li>
+<li>
+<p><strong>Testing Requirements:</strong></p>
+</li>
+<li>Unit tests with 90%+ coverage</li>
+<li>BDD scenarios for key user journeys</li>
+<li>Integration tests using Testcontainers</li>
+<li>End-to-end tests for critical paths</li>
+<li>Performance tests for API endpoints</li>
+</ol>
+<p><strong>Deliverables:</strong></p>
+<ol>
+<li>Complete test suite with documentation</li>
+<li>BDD feature files with business scenarios</li>
+<li>Containerized testing environment</li>
+<li>CI/CD pipeline configuration for automated testing</li>
+<li>Test reporting and coverage analysis</li>
+</ol>
+<p><strong>Evaluation Criteria:</strong></p>
+<ul>
+<li>Test coverage and quality</li>
+<li>BDD scenario clarity and business alignment</li>
+<li>Integration test effectiveness</li>
+<li>Performance test results</li>
+<li>Documentation quality</li>
+</ul>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>BDD and TDD practices form the foundation of quality software development by ensuring code correctness, maintainability, and business alignment. Key takeaways include:</p>
+<ul>
+<li><strong>TDD improves design</strong> through the Red-Green-Refactor cycle</li>
+<li><strong>BDD ensures business alignment</strong> through collaborative scenario development</li>
+<li><strong>Test-first development</strong> catches bugs early and reduces costs</li>
+<li><strong>Comprehensive testing</strong> includes unit, integration, and end-to-end tests</li>
+<li><strong>Container-based testing</strong> provides realistic and isolated test environments</li>
+<li><strong>Living documentation</strong> through tests maintains system knowledge</li>
+<li><strong>Continuous testing</strong> in CI/CD pipelines ensures ongoing quality</li>
+</ul>
+<p>By implementing these practices with .NET and React Native applications using Podman and Red Hat UBI images, development teams can deliver reliable, well-tested software that meets both technical and business requirements. The combination of TDD and BDD creates a robust development workflow that scales from individual developers to large enterprise teams.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../clean_architecture/" class="btn btn-neutral float-left" title="Clean Architecture"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../using_composefilesforlocaldev/" class="btn btn-neutral float-right" title="Local Development with podman compose ">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../clean_architecture/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../using_composefilesforlocaldev/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

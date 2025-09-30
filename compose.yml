@@ -1,0 +1,19 @@
+version: '3'
+services:
+  mkdocs:
+    image: registry.access.redhat.com/ubi9/python-311
+    user: root
+    command: >
+      sh -c "
+        dnf install -y cairo pango gdk-pixbuf2 &&
+        pip install mkdocs mkdocs-material mkdocs-with-pdf mkdocs-mermaid2-plugin pymdown-extensions &&
+        mkdocs serve -a 0.0.0.0:8000
+      "
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - ./site:/app/site
+    working_dir: /app
+    environment:
+      - ENABLE_PDF_EXPORT=1

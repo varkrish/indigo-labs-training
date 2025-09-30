@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Container Fundamentals - Modern Software Development Practices</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Container Fundamentals";
+        var mkdocs_page_input_path = "2_containerization/containers.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/Containerfile.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/bash.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> Modern Software Development Practices
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">1. Cloud Fundamentals</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../1_cloud/hybrid_cloud/">Hybrid Cloud</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../1_cloud/cloud_native_development/">Cloud Native Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../1_cloud/cncf/">CNCF Landscape</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">2. Containerization</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Container Fundamentals</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-concepts">Key Concepts</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#what-are-containers">What are Containers?</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#podman-vs-docker">Podman vs Docker</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#container-images">Container Images</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#installing-podman">Installing Podman</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#practical-examples">Practical Examples</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#example-1-running-a-net-application-with-ubi">Example 1: Running a .NET Application with UBI</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#step-1-create-a-simple-net-api">Step 1: Create a Simple .NET API</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-2-create-a-Containerfile-with-ubi">Step 2: Create a Containerfile with UBI</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-3-build-and-publish-the-application">Step 3: Build and Publish the Application</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-4-test-the-application">Step 4: Test the Application</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-2-react-native-development-environment">Example 2: React Native Development Environment</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#common-pitfalls">Common Pitfalls</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-rootless-container-permissions">1. Rootless Container Permissions</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-network-connectivity-issues">2. Network Connectivity Issues</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-image-size-optimization">3. Image Size Optimization</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#security-best-practices">Security Best Practices</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#performance-best-practices">Performance Best Practices</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#development-workflow">Development Workflow</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tools-and-resources">Tools and Resources</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#essential-podman-commands">Essential Podman Commands</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#useful-resources">Useful Resources</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#hands-on-exercise">Hands-on Exercise</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#exercise-containerize-a-full-stack-application">Exercise: Containerize a Full-Stack Application</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../container_engines_crio/">CRI-O Container Engine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../k8s_openshift/">Kubernetes & OpenShift</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">3. Development Foundations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/requirement_centric_development/">Requirement-Centric Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/12_factor_app/">12-Factor App Methodology</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/microservices/">Microservices Architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/open_practices_inner_loop/">Inner Loop Practices</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/open_practices_outer_loop/">Outer Loop Practices</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../3_foundations/nfrs/">Non-Functional Requirements</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">4. Agile Development & Testing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../4_testing/clean_architecture/">Clean Architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../4_testing/bdd_tdd/">BDD and TDD Practices</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../4_testing/using_composefilesforlocaldev/">Local Development with podman compose </a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../4_testing/mocking_dependent_systems_apis/">API Mocking Strategies</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../4_testing/secure_coding/">Secure Coding Practices</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../4_testing/performance_testing_containers/">Performance Testing in Containers</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">5. CI/CD</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ci_cd/cloud_native_ci_cd/">Cloud-Native CI/CD</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">6. Observability</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../observability/dotnet_open_telemetry/">.NET OpenTelemetry</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">7. Red Hat Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../redhat_ecosystem/redhat_software_collections/">Red Hat Software Collections</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../redhat_ecosystem/redhat_supply_chain_ubi/">UBI and Supply Chain Security</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Modern Software Development Practices</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">2. Containerization</li>
+      <li class="breadcrumb-item active">Container Fundamentals</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="container-fundamentals-with-podman">Container Fundamentals with Podman<a class="headerlink" href="#container-fundamentals-with-podman" title="Permanent link">&para;</a></h1>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>Containers have revolutionized software development by providing consistent, lightweight, and portable environments for applications. This guide focuses on container fundamentals using <strong>Podman</strong>, an open-source, daemonless container engine that's particularly relevant for junior and mid-senior developers working with .NET and React Native applications.</p>
+<p>Unlike Docker, Podman runs without a daemon and provides enhanced security through rootless containers, making it an ideal choice for modern development practices.</p>
+<h2 id="key-concepts">Key Concepts<a class="headerlink" href="#key-concepts" title="Permanent link">&para;</a></h2>
+<h3 id="what-are-containers">What are Containers?<a class="headerlink" href="#what-are-containers" title="Permanent link">&para;</a></h3>
+<p>Containers are lightweight, standalone packages that include everything needed to run an application:
+- Application code
+- Runtime environment
+- System tools and libraries
+- Settings and dependencies</p>
+<h3 id="podman-vs-docker">Podman vs Docker<a class="headerlink" href="#podman-vs-docker" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Podman</th>
+<th>Docker</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Architecture</td>
+<td>Daemonless</td>
+<td>Daemon-based</td>
+</tr>
+<tr>
+<td>Root privileges</td>
+<td>Rootless by default</td>
+<td>Requires root/daemon</td>
+</tr>
+<tr>
+<td>Security</td>
+<td>Enhanced security</td>
+<td>Standard container security</td>
+</tr>
+<tr>
+<td>Compatibility</td>
+<td>Docker-compatible CLI</td>
+<td>Native Docker</td>
+</tr>
+<tr>
+<td>Systemd integration</td>
+<td>Native support</td>
+<td>Limited</td>
+</tr>
+</tbody>
+</table>
+<h3 id="container-images">Container Images<a class="headerlink" href="#container-images" title="Permanent link">&para;</a></h3>
+<p>Container images are templates used to create containers. For this documentation, we exclusively use <strong>Red Hat Universal Base Images (UBI)</strong> which provide:
+- Enterprise-grade security
+- Regular security updates
+- Compliance with enterprise standards
+- Free redistribution rights</p>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Basic understanding of command-line operations</li>
+<li>Podman installed on your development machine</li>
+<li>Access to container registries (Red Hat Container Catalog)</li>
+<li>Understanding of application deployment concepts</li>
+</ul>
+<h3 id="installing-podman">Installing Podman<a class="headerlink" href="#installing-podman" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># On RHEL/CentOS/Fedora</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>podman
+
+<span class="c1"># On Ubuntu/Debian  </span>
+sudo<span class="w"> </span>apt-get<span class="w"> </span>update
+sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>podman
+
+<span class="c1"># On macOS</span>
+brew<span class="w"> </span>install<span class="w"> </span>podman
+</code></pre></div>
+
+<h2 id="practical-examples">Practical Examples<a class="headerlink" href="#practical-examples" title="Permanent link">&para;</a></h2>
+<h3 id="example-1-running-a-net-application-with-ubi">Example 1: Running a .NET Application with UBI<a class="headerlink" href="#example-1-running-a-net-application-with-ubi" title="Permanent link">&para;</a></h3>
+<p>Let's create a simple .NET Web API using Red Hat UBI base images.</p>
+<h4 id="step-1-create-a-simple-net-api">Step 1: Create a Simple .NET API<a class="headerlink" href="#step-1-create-a-simple-net-api" title="Permanent link">&para;</a></h4>
+<p>First, create a new .NET Web API project:</p>
+<div class="codehilite"><pre><span></span><code>mkdir<span class="w"> </span>dotnet-container-demo
+<span class="nb">cd</span><span class="w"> </span>dotnet-container-demo
+dotnet<span class="w"> </span>new<span class="w"> </span>webapi<span class="w"> </span>-n<span class="w"> </span>MyApi
+<span class="nb">cd</span><span class="w"> </span>MyApi
+</code></pre></div>
+
+<h4 id="step-2-create-a-Containerfile-with-ubi">Step 2: Create a Containerfile with UBI<a class="headerlink" href="#step-2-create-a-Containerfile-with-ubi" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="c"># Use Red Hat UBI .NET 6.0 runtime image</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">registry.access.redhat.com/ubi8/dotnet-60-runtime</span>
+
+<span class="c"># Set the working directory</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+
+<span class="c"># Copy the published application</span>
+<span class="k">COPY</span><span class="w"> </span>bin/Release/net6.0/publish/<span class="w"> </span>.
+
+<span class="c"># Expose the port</span>
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">5000</span>
+
+<span class="c"># Set environment variables</span>
+<span class="k">ENV</span><span class="w"> </span><span class="nv">ASPNETCORE_URLS</span><span class="o">=</span>http://+:5000
+<span class="k">ENV</span><span class="w"> </span><span class="nv">ASPNETCORE_ENVIRONMENT</span><span class="o">=</span>Production
+
+<span class="c"># Create a non-root user for security</span>
+<span class="k">RUN</span><span class="w"> </span>groupadd<span class="w"> </span>-r<span class="w"> </span>appuser<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>useradd<span class="w"> </span>-r<span class="w"> </span>-g<span class="w"> </span>appuser<span class="w"> </span>appuser
+<span class="k">RUN</span><span class="w"> </span>chown<span class="w"> </span>-R<span class="w"> </span>appuser:appuser<span class="w"> </span>/app
+<span class="k">USER</span><span class="w"> </span><span class="s">appuser</span>
+
+<span class="c"># Set the entry point</span>
+<span class="k">ENTRYPOINT</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;dotnet&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;MyApi.dll&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<h4 id="step-3-build-and-publish-the-application">Step 3: Build and Publish the Application<a class="headerlink" href="#step-3-build-and-publish-the-application" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Publish the application</span>
+dotnet<span class="w"> </span>publish<span class="w"> </span>-c<span class="w"> </span>Release
+
+<span class="c1"># Build the container image with Podman</span>
+podman<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>myapi:latest<span class="w"> </span>.
+
+<span class="c1"># Run the container</span>
+podman<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>myapi-container<span class="w"> </span>-p<span class="w"> </span><span class="m">5000</span>:5000<span class="w"> </span>myapi:latest
+</code></pre></div>
+
+<h4 id="step-4-test-the-application">Step 4: Test the Application<a class="headerlink" href="#step-4-test-the-application" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Test the API endpoint</span>
+curl<span class="w"> </span>http://localhost:5000/weatherforecast
+
+<span class="c1"># View container logs</span>
+podman<span class="w"> </span>logs<span class="w"> </span>myapi-container
+
+<span class="c1"># Stop and remove the container</span>
+podman<span class="w"> </span>stop<span class="w"> </span>myapi-container
+podman<span class="w"> </span>rm<span class="w"> </span>myapi-container
+</code></pre></div>
+
+<h3 id="example-2-react-native-development-environment">Example 2: React Native Development Environment<a class="headerlink" href="#example-2-react-native-development-environment" title="Permanent link">&para;</a></h3>
+<p>Create a development environment for React Native using UBI Node.js images:</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># Use Red Hat UBI Node.js 16 image</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">registry.access.redhat.com/ubi8/nodejs-16</span>
+
+<span class="c"># Set working directory</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+
+<span class="c"># Install React Native CLI globally</span>
+<span class="k">USER</span><span class="w"> </span><span class="s">root</span>
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>@react-native-community/cli
+
+<span class="c"># Create app user and switch to it</span>
+<span class="k">RUN</span><span class="w"> </span>groupadd<span class="w"> </span>-r<span class="w"> </span>appuser<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>useradd<span class="w"> </span>-r<span class="w"> </span>-g<span class="w"> </span>appuser<span class="w"> </span>appuser
+<span class="k">RUN</span><span class="w"> </span>chown<span class="w"> </span>-R<span class="w"> </span>appuser:appuser<span class="w"> </span>/app
+<span class="k">USER</span><span class="w"> </span><span class="s">appuser</span>
+
+<span class="c"># Copy package files</span>
+<span class="k">COPY</span><span class="w"> </span>--chown<span class="o">=</span>appuser:appuser<span class="w"> </span>package*.json<span class="w"> </span>./
+
+<span class="c"># Install dependencies</span>
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>install
+
+<span class="c"># Copy source code</span>
+<span class="k">COPY</span><span class="w"> </span>--chown<span class="o">=</span>appuser:appuser<span class="w"> </span>.<span class="w"> </span>.
+
+<span class="c"># Expose Metro bundler port</span>
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">8081</span>
+
+<span class="c"># Start the Metro bundler</span>
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;npm&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;start&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<p>Build and run the React Native development container:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Build the development image</span>
+podman<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>react-native-dev:latest<span class="w"> </span>-f<span class="w"> </span>Containerfile.dev<span class="w"> </span>.
+
+<span class="c1"># Run the development container with volume mounting</span>
+podman<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>rn-dev<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-p<span class="w"> </span><span class="m">8081</span>:8081<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>:/app:Z<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>react-native-dev:latest
+</code></pre></div>
+
+<h2 id="common-pitfalls">Common Pitfalls<a class="headerlink" href="#common-pitfalls" title="Permanent link">&para;</a></h2>
+<h3 id="1-rootless-container-permissions">1. Rootless Container Permissions<a class="headerlink" href="#1-rootless-container-permissions" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: Permission errors when mounting volumes or accessing files.</p>
+<p><strong>Solution</strong>: Use proper SELinux contexts and understand rootless user mapping:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Use :Z flag for SELinux contexts</span>
+podman<span class="w"> </span>run<span class="w"> </span>-v<span class="w"> </span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>:/app:Z<span class="w"> </span>myimage
+
+<span class="c1"># Check user mapping</span>
+podman<span class="w"> </span>unshare<span class="w"> </span>cat<span class="w"> </span>/proc/self/uid_map
+</code></pre></div>
+
+<h3 id="2-network-connectivity-issues">2. Network Connectivity Issues<a class="headerlink" href="#2-network-connectivity-issues" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: Containers can't communicate with each other or external services.</p>
+<p><strong>Solution</strong>: Use Podman networks properly:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create a custom network</span>
+podman<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>myapp-network
+
+<span class="c1"># Run containers on the same network</span>
+podman<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--network<span class="w"> </span>myapp-network<span class="w"> </span>--name<span class="w"> </span>api<span class="w"> </span>myapi:latest
+podman<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--network<span class="w"> </span>myapp-network<span class="w"> </span>--name<span class="w"> </span>frontend<span class="w"> </span>myfrontend:latest
+</code></pre></div>
+
+<h3 id="3-image-size-optimization">3. Image Size Optimization<a class="headerlink" href="#3-image-size-optimization" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: Large container images slow down builds and deployments.</p>
+<p><strong>Solution</strong>: Use multi-stage builds and minimal base images:</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># Multi-stage build for .NET</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">registry.access.redhat.com/ubi8/dotnet-60</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">build</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/src</span>
+<span class="k">COPY</span><span class="w"> </span>*.csproj<span class="w"> </span>.
+<span class="k">RUN</span><span class="w"> </span>dotnet<span class="w"> </span>restore
+<span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>.
+<span class="k">RUN</span><span class="w"> </span>dotnet<span class="w"> </span>publish<span class="w"> </span>-c<span class="w"> </span>Release<span class="w"> </span>-o<span class="w"> </span>/app/publish
+
+<span class="k">FROM</span><span class="w"> </span><span class="s">registry.access.redhat.com/ubi8/dotnet-60-runtime</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">runtime</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+<span class="k">COPY</span><span class="w"> </span>--from<span class="o">=</span>build<span class="w"> </span>/app/publish<span class="w"> </span>.
+<span class="k">ENTRYPOINT</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;dotnet&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;MyApi.dll&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
+<h3 id="security-best-practices">Security Best Practices<a class="headerlink" href="#security-best-practices" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Use Rootless Containers</strong>: Run Podman without root privileges</li>
+<li><strong>Non-root User</strong>: Always run applications as non-root users inside containers</li>
+<li><strong>Minimal Base Images</strong>: Use UBI minimal images when possible</li>
+<li><strong>Regular Updates</strong>: Keep base images updated with security patches</li>
+<li><strong>Secrets Management</strong>: Never include secrets in images</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="c"># Example of secure container setup</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">registry.access.redhat.com/ubi8/dotnet-60-runtime</span>
+
+<span class="c"># Create non-root user</span>
+<span class="k">RUN</span><span class="w"> </span>groupadd<span class="w"> </span>-r<span class="w"> </span>appuser<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>useradd<span class="w"> </span>-r<span class="w"> </span>-g<span class="w"> </span>appuser<span class="w"> </span>appuser
+
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+<span class="k">COPY</span><span class="w"> </span>--chown<span class="o">=</span>appuser:appuser<span class="w"> </span>.<span class="w"> </span>.
+
+<span class="c"># Switch to non-root user</span>
+<span class="k">USER</span><span class="w"> </span><span class="s">appuser</span>
+
+<span class="k">ENTRYPOINT</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;dotnet&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;MyApp.dll&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<h3 id="performance-best-practices">Performance Best Practices<a class="headerlink" href="#performance-best-practices" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Layer Caching</strong>: Order Containerfile instructions to maximize cache hits</li>
+<li><strong>Multi-stage Builds</strong>: Separate build and runtime environments</li>
+<li><strong>Minimize Layers</strong>: Combine RUN commands when logical</li>
+<li><strong>.containerignore</strong>: Exclude unnecessary files from build context</li>
+</ol>
+<p>Example <code>.containerignore</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="nf">node_modules</span>
+<span class="na">.git</span>
+<span class="err">*</span><span class="na">.md</span>
+<span class="na">.gitignore</span>
+<span class="nf">Containerfile</span><span class="p">*</span>
+<span class="err">*</span><span class="na">.log</span>
+</code></pre></div>
+
+<h3 id="development-workflow">Development Workflow<a class="headerlink" href="#development-workflow" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Local Development</strong>: Use volume mounts for hot reloading</li>
+<li><strong>Testing</strong>: Create separate images for testing environments</li>
+<li><strong>Debugging</strong>: Use interactive shells for troubleshooting</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Interactive debugging session</span>
+podman<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>myimage<span class="w"> </span>/bin/bash
+
+<span class="c1"># Run with development volume mounts</span>
+podman<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>:/app:Z<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-p<span class="w"> </span><span class="m">5000</span>:5000<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>dev-container<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>myapi:dev
+</code></pre></div>
+
+<h2 id="tools-and-resources">Tools and Resources<a class="headerlink" href="#tools-and-resources" title="Permanent link">&para;</a></h2>
+<h3 id="essential-podman-commands">Essential Podman Commands<a class="headerlink" href="#essential-podman-commands" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Image management</span>
+podman<span class="w"> </span>images<span class="w">                    </span><span class="c1"># List images</span>
+podman<span class="w"> </span>pull<span class="w"> </span>image:tag<span class="w">           </span><span class="c1"># Pull image</span>
+podman<span class="w"> </span>rmi<span class="w"> </span>image:tag<span class="w">            </span><span class="c1"># Remove image</span>
+podman<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>name:tag<span class="w"> </span>.<span class="w">      </span><span class="c1"># Build image</span>
+
+<span class="c1"># Container management</span>
+podman<span class="w"> </span>ps<span class="w">                       </span><span class="c1"># List running containers</span>
+podman<span class="w"> </span>ps<span class="w"> </span>-a<span class="w">                    </span><span class="c1"># List all containers</span>
+podman<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>image<span class="w">      </span><span class="c1"># Run container</span>
+podman<span class="w"> </span>stop<span class="w"> </span>container<span class="w">           </span><span class="c1"># Stop container</span>
+podman<span class="w"> </span>rm<span class="w"> </span>container<span class="w">             </span><span class="c1"># Remove container</span>
+
+<span class="c1"># Networking</span>
+podman<span class="w"> </span>network<span class="w"> </span>ls<span class="w">               </span><span class="c1"># List networks</span>
+podman<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>name<span class="w">      </span><span class="c1"># Create network</span>
+podman<span class="w"> </span>port<span class="w"> </span>container<span class="w">           </span><span class="c1"># Show port mappings</span>
+
+<span class="c1"># Troubleshooting</span>
+podman<span class="w"> </span>logs<span class="w"> </span>container<span class="w">           </span><span class="c1"># View logs</span>
+podman<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>container<span class="w"> </span>bash<span class="w">  </span><span class="c1"># Interactive shell</span>
+podman<span class="w"> </span>inspect<span class="w"> </span>container<span class="w">        </span><span class="c1"># Detailed information</span>
+</code></pre></div>
+
+<h3 id="useful-resources">Useful Resources<a class="headerlink" href="#useful-resources" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://docs.podman.io/">Podman Official Documentation</a></li>
+<li><a href="https://access.redhat.com/containers/">Red Hat UBI Images</a></li>
+<li><a href="https://developers.redhat.com/blog/2018/02/22/container-terminology-practical-introduction/">Container Best Practices</a></li>
+<li><a href="https://github.com/containers/podman/blob/main/docs/tutorials/rootless_tutorial.md">Rootless Containers Guide</a></li>
+</ul>
+<h2 id="hands-on-exercise">Hands-on Exercise<a class="headerlink" href="#hands-on-exercise" title="Permanent link">&para;</a></h2>
+<h3 id="exercise-containerize-a-full-stack-application">Exercise: Containerize a Full-Stack Application<a class="headerlink" href="#exercise-containerize-a-full-stack-application" title="Permanent link">&para;</a></h3>
+<p>Create a multi-container application with:
+1. .NET Web API backend
+2. React frontend
+3. PostgreSQL database</p>
+<p><strong>Requirements</strong>:
+- Use only Red Hat UBI base images
+- Implement proper security practices (non-root users)
+- Use Podman networks for container communication
+- Include proper error handling and logging
+- Create a podman compose  file for orchestration</p>
+<p><strong>Steps</strong>:</p>
+<ol>
+<li>Create the .NET API with Entity Framework</li>
+<li>Create a React frontend that consumes the API</li>
+<li>Set up PostgreSQL with proper initialization</li>
+<li>Create Containerfiles for each component</li>
+<li>Create a <code>compose.yml</code> file</li>
+<li>Test the complete application stack</li>
+</ol>
+<p><strong>Deliverables</strong>:
+- Working containerized application
+- Documentation of the containerization process
+- Security analysis of the implementation
+- Performance testing results</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>Container fundamentals with Podman provide the foundation for modern application development and deployment. Key takeaways include:</p>
+<ul>
+<li><strong>Podman offers enhanced security</strong> through rootless containers and daemonless architecture</li>
+<li><strong>Red Hat UBI images</strong> provide enterprise-grade security and compliance</li>
+<li><strong>Proper security practices</strong> include non-root users and minimal base images</li>
+<li><strong>Multi-stage builds</strong> optimize image size and security</li>
+<li><strong>Container orchestration</strong> enables complex application architectures</li>
+<li><strong>Development workflows</strong> benefit from containerization through consistency and portability</li>
+</ul>
+<p>By mastering these container fundamentals, developers can build secure, scalable, and maintainable applications that follow modern DevOps practices and integrate seamlessly with cloud-native architectures.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../1_cloud/cncf/" class="btn btn-neutral float-left" title="CNCF Landscape"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../container_engines_crio/" class="btn btn-neutral float-right" title="CRI-O Container Engine">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../../1_cloud/cncf/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../container_engines_crio/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

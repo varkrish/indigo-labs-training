@@ -1,0 +1,78 @@
+site_name: Modern Software Development Practices
+site_description: Comprehensive documentation for modern software development practices by Red Hat Open Innovation Labs for IndiGo Airlines
+docs_dir: docs
+theme:
+  name: material
+  logo: assets/redhat-logo-white.png
+  favicon: assets/indigo-favicon.svg
+  palette:
+    scheme: default
+    primary: custom
+    accent: custom
+  font:
+    text: Red Hat Text
+    code: Red Hat Mono
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+
+nav:
+  - 'Home': 'index.md'
+  - '1. Cloud Fundamentals':
+    - 'Hybrid Cloud': '1_cloud/hybrid_cloud.md'
+    - 'Cloud Native Development': '1_cloud/cloud_native_development.md'
+  - '2. Containerization':
+    - 'Container Fundamentals': '2_containerization/containers.md'
+    - 'CRI-O Container Engine': '2_containerization/container_engines_crio.md'
+    - 'Kubernetes & OpenShift': '2_containerization/k8s_openshift.md'
+  - '3. Development Foundations':
+    - 'Requirement-Centric Development': '3_foundations/requirement_centric_development.md'
+    - '12-Factor App Methodology': '3_foundations/12_factor_app.md'
+    - 'Microservices Architecture': '3_foundations/microservices.md'
+    - 'Clean Architecture': '3_foundations/clean_architecture.md'
+    - 'Inner Loop Practices': '3_foundations/open_practices_inner_loop.md'
+    - 'Non-Functional Requirements': '3_foundations/nfrs.md'
+  - '4. Agile Development & Testing':
+    - 'BDD and TDD Practices': '4_agiledevtesting/bdd_tdd.md'
+    - 'Local Development with podman compose ': '4_agiledevtesting/using_composefilesforlocaldev.md'
+    - 'API Mocking Strategies': '4_agiledevtesting/mocking_dependent_systems_apis.md'
+    - 'Performance Testing in Containers': '4_agiledevtesting/performance_testing_containers.md'
+    - 'Requirement-Centric Development': '4_agiledevtesting/requirement_centric_development.md'
+  - '5. Red Hat Ecosystem':
+    - 'Red Hat Software Collections': 'redhat_ecosystem/redhat_software_collections.md'
+
+plugins:
+  - search
+  - mermaid2
+  - with-pdf:
+      author: Red Hat Open Innovation Labs
+      copyright: © Red Hat, Inc. - IndiGo Airlines. All rights reserved.
+      cover_title: Modern Software Development Practices
+      cover_subtitle: Agile Development with Containers and Cloud-Native Technologies
+      output_path: pdf/modern-software-development-practices.pdf
+      enabled_if_env: ENABLE_PDF_EXPORT
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      use_pygments: true
+  - toc:
+      permalink: true
+  - tables
+  - fenced_code
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid

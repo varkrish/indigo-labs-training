@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="120" height="40">
+  <!-- Temporary Red Hat Logo Placeholder - Replace with official Red Hat brand asset -->
+  <rect width="120" height="40" fill="#FFFFFF" rx="4"/>
+  <text x="60" y="26" font-family="Red Hat Display, sans-serif" font-size="18" font-weight="700" fill="#EE0000" text-anchor="middle">
+    Red Hat
+  </text>
+</svg>
